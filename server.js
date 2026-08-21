@@ -15,6 +15,7 @@ let privateMessages = dataManager.loadPrivateMessages();
 let pendingFriendRequests = dataManager.loadFriendRequests();
 let appeals = dataManager.loadAppeals();
 let adminLogs = dataManager.loadAdminLogs();
+let systemAnnouncements = dataManager.loadSystemAnnouncements();
 
 const userSessions = new Map();
 const MAX_HISTORY = 200;
@@ -106,10 +107,48 @@ function saveAllData() {
     dataManager.saveFriendRequests(pendingFriendRequests);
     dataManager.saveAppeals(appeals);
     dataManager.saveAdminLogs(adminLogs);
+    dataManager.saveSystemAnnouncements(systemAnnouncements);
 }
 
 // 启动自动备份（每24小时备份一次）
 dataManager.startAutoBackup(24);
+
+// 定时清理过期公告（每分钟检查一次）
+setInterval(() => {
+    const now = Date.now();
+    let hasChanges = false;
+    systemAnnouncements = systemAnnouncements.filter(ann => {
+        if (ann.expiresAt && now > ann.expiresAt) {
+            hasChanges = true;
+            return false;
+        }
+        return true;
+    });
+    if (hasChanges) {
+        dataManager.saveSystemAnnouncements(systemAnnouncements);
+        // 广播公告更新给所有用户
+        broadcastActiveAnnouncements();
+    }
+}, 60000);
+
+// 广播当前有效的公告给所有用户
+function broadcastActiveAnnouncements() {
+    const now = Date.now();
+    const activeAnnouncements = systemAnnouncements.filter(ann => {
+        return !ann.expiresAt || now < ann.expiresAt;
+    });
+    
+    const message = JSON.stringify({
+        type: 'system_announcements',
+        announcements: activeAnnouncements
+    });
+    
+    wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(message);
+        }
+    });
+}
 
 // 创建 HTTP 服务器
 const server = http.createServer((req, res) => {
@@ -643,6 +682,91 @@ function handleApiRequest(req, res) {
         return;
     }
 
+    // ========== 系统公告 API ==========
+    // 发布系统公告
+    if (pathname === '/api/announcement/publish' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => body += chunk);
+        req.on('end', () => {
+            try {
+                const { content, durationDays, publisher } = JSON.parse(body);
+                
+                if (!content || content.trim().length === 0) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ success: false, message: '公告内容不能为空' }));
+                    return;
+                }
+                
+                const announcement = {
+                    id: crypto.randomUUID(),
+                    content: content.trim(),
+                    publisher: publisher || '系统管理员',
+                    publishedAt: new Date().toISOString(),
+                    expiresAt: durationDays > 0 ? Date.now() + durationDays * 24 * 60 * 60 * 1000 : null,
+                    durationDays: durationDays || 0
+                };
+                
+                systemAnnouncements.push(announcement);
+                dataManager.saveSystemAnnouncements(systemAnnouncements);
+                
+                // 广播给所有用户
+                broadcastActiveAnnouncements();
+                
+                addAdminLog(publisher, '发布系统公告', content.substring(0, 50) + (content.length > 50 ? '...' : ''));
+                
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: true, announcement }));
+            } catch (e) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: '请求格式错误' }));
+            }
+        });
+        return;
+    }
+
+    // 获取所有公告（管理员用）
+    if (pathname === '/api/announcement/list' && req.method === 'GET') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ 
+            success: true, 
+            announcements: systemAnnouncements 
+        }));
+        return;
+    }
+
+    // 删除公告
+    if (pathname === '/api/announcement/delete' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => body += chunk);
+        req.on('end', () => {
+            try {
+                const { announcementId, adminUsername } = JSON.parse(body);
+                
+                const index = systemAnnouncements.findIndex(a => a.id === announcementId);
+                if (index === -1) {
+                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ success: false, message: '公告不存在' }));
+                    return;
+                }
+                
+                systemAnnouncements.splice(index, 1);
+                dataManager.saveSystemAnnouncements(systemAnnouncements);
+                
+                // 广播更新给所有用户
+                broadcastActiveAnnouncements();
+                
+                addAdminLog(adminUsername, '删除系统公告', `公告ID: ${announcementId}`);
+                
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: true }));
+            } catch (e) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: '请求格式错误' }));
+            }
+        });
+        return;
+    }
+
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ success: false, message: 'API不存在' }));
 }
@@ -846,6 +970,18 @@ wss.on('connection', (ws) => {
                                 }));
                             });
                         }
+                    }
+                    
+                    // 发送当前有效的系统公告
+                    const now = Date.now();
+                    const activeAnnouncements = systemAnnouncements.filter(ann => {
+                        return !ann.expiresAt || now < ann.expiresAt;
+                    });
+                    if (activeAnnouncements.length > 0) {
+                        ws.send(JSON.stringify({
+                            type: 'system_announcements',
+                            announcements: activeAnnouncements
+                        }));
                     }
                     
                     if (user.muted && user.muteUntil && Date.now() > user.muteUntil) {
@@ -1436,7 +1572,7 @@ server.listen(PORT, () => {
     console.log(`👑 超级管理员账号: zuijiawzy 密码: zjwzy1111aw`);
     console.log(`👤 测试账号: test 密码: 123456`);
     console.log(`💾 数据存储目录: ${dataManager.DATA_DIR}`);
-    console.log(`📦 数据文件: users.json, messages.json, privateMessages.json, friendRequests.json, appeals.json, adminLogs.json`);
+    console.log(`📦 数据文件: users.json, messages.json, privateMessages.json, friendRequests.json, appeals.json, adminLogs.json, systemAnnouncements.json`);
     console.log(`🔄 自动备份已启用，每24小时备份一次到 data/backups/`);
     console.log('');
     console.log('📌 ====== Zeabur 部署提示 ======');

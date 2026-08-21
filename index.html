@@ -300,7 +300,72 @@
             gap: 12px;
             min-height: 0;
             -webkit-overflow-scrolling: touch;
+            position: relative;
         }
+        
+        /* ===== 系统公告样式 - 居中横幅卡片 ===== */
+        .announcement-banner {
+            align-self: center;
+            width: 90%;
+            max-width: 700px;
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 16px 24px;
+            margin: 6px 0 12px 0;
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.25);
+            position: relative;
+            animation: announcementSlideDown 0.5s ease-out;
+            text-align: center;
+            z-index: 50;
+        }
+        .announcement-banner .announcement-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        .announcement-banner .announcement-content {
+            font-size: 1rem;
+            color: #78350f;
+            font-weight: 500;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+        .announcement-banner .announcement-time {
+            display: block;
+            font-size: 0.7rem;
+            color: #92400e;
+            opacity: 0.7;
+            margin-top: 6px;
+            font-weight: 400;
+        }
+        .announcement-banner .announcement-close-btn {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #92400e;
+            opacity: 0.5;
+            transition: 0.15s;
+            padding: 4px;
+        }
+        .announcement-banner .announcement-close-btn:hover {
+            opacity: 1;
+        }
+        
+        @keyframes announcementSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
         .message {
             display: flex;
             flex-direction: column;
@@ -786,9 +851,84 @@
         .admin-panel .btn-danger { background: #dc2626; color: white; }
         .admin-panel .btn-warning { background: #f59e0b; color: white; }
         .admin-panel .btn-secondary { background: #e0e0e0; color: #333; }
+        .admin-panel .btn-info { background: #3b82f6; color: white; }
         .admin-panel table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         .admin-panel table th { text-align: left; padding: 8px; background: #f7f7f7; border-bottom: 1px solid #e0e0e0; font-weight: 500; color: #666; }
         .admin-panel table td { padding: 8px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+        .admin-panel .announcement-card {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+        }
+        .admin-panel .announcement-card .announcement-text {
+            font-size: 0.95rem;
+            color: #78350f;
+            font-weight: 500;
+        }
+        .admin-panel .announcement-card .announcement-meta {
+            font-size: 0.8rem;
+            color: #92400e;
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+        .admin-panel .announcement-card .announcement-actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 6px;
+        }
+        .announcement-form {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #e2e8f0;
+        }
+        .announcement-form textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #d8dfe8;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            background: white;
+            transition: 0.15s;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+        }
+        .announcement-form textarea:focus {
+            border-color: #07c160;
+            box-shadow: 0 0 0 2px rgba(7,193,96,0.1);
+        }
+        .announcement-form .form-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .announcement-form .form-row label {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .announcement-form .form-row input[type="number"] {
+            width: 80px;
+            padding: 8px 10px;
+            border: 1px solid #d8dfe8;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .announcement-form .form-row input[type="number"]:focus {
+            border-color: #07c160;
+        }
         
         .appeal-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1200; justify-content: center; align-items: center; }
         .appeal-modal.active { display: flex; }
@@ -844,6 +984,13 @@
             .emoji-btn {
                 font-size: 1.3rem !important;
                 padding: 4px 6px !important;
+            }
+            .announcement-banner {
+                width: 95%;
+                padding: 12px 16px;
+            }
+            .announcement-banner .announcement-content {
+                font-size: 0.9rem;
             }
         }
         
@@ -986,6 +1133,7 @@
             <div class="tab active" data-tab="users">用户管理</div>
             <div class="tab" data-tab="messages">消息管理</div>
             <div class="tab" data-tab="stats">数据统计</div>
+            <div class="tab" data-tab="announcements">系统公告</div>
             <div class="tab" data-tab="logs" id="logsTab" style="display:none;">操作日志</div>
         </div>
         <div class="admin-content" id="adminContent"></div>
@@ -1111,6 +1259,7 @@
             let currentEmojiCategory = 'smileys';
             let currentEmojiPage = 0;
             let currentMessageElements = [];
+            let activeAnnouncements = []; // 当前有效的公告
             
             // Emoji 数据
             const emojiData = {
@@ -1246,7 +1395,7 @@
             function logout() {
                 if (confirm('确定要退出登录吗？')) {
                     if (socket) socket.close(1000, '用户退出');
-                    currentUser = null; isConnected = false; messageHistory = []; privateMessageHistory = {}; unreadCounts = {}; systemMessagesData = [];
+                    currentUser = null; isConnected = false; messageHistory = []; privateMessageHistory = {}; unreadCounts = {}; systemMessagesData = []; activeAnnouncements = [];
                     settingsPage.classList.remove('active'); adminPage.classList.remove('active'); chatApp.classList.remove('active');
                     authContainer.style.display = 'block';
                     document.getElementById('navChat').classList.add('active'); document.getElementById('navSettings').classList.remove('active'); document.getElementById('navAdmin').classList.remove('active');
@@ -1352,38 +1501,120 @@
                 messageContainer.scrollTop = messageContainer.scrollHeight;
             }
             
+            // ===== 公告渲染 =====
+            function renderAnnouncements() {
+                // 移除已有公告
+                document.querySelectorAll('.announcement-banner').forEach(el => el.remove());
+                
+                const now = Date.now();
+                const validAnnouncements = activeAnnouncements.filter(ann => {
+                    return !ann.expiresAt || now < ann.expiresAt;
+                });
+                
+                if (validAnnouncements.length === 0) return;
+                
+                // 在消息容器顶部插入公告（在系统消息之后，但在所有聊天消息之前）
+                const firstChild = messageContainer.firstChild;
+                validAnnouncements.forEach(ann => {
+                    const banner = document.createElement('div');
+                    banner.className = 'announcement-banner';
+                    banner.dataset.announcementId = ann.id;
+                    
+                    // 关闭按钮（仅对当前用户可见，只隐藏本地）
+                    const closeBtn = document.createElement('button');
+                    closeBtn.className = 'announcement-close-btn';
+                    closeBtn.textContent = '×';
+                    closeBtn.title = '关闭此公告（仅对您隐藏）';
+                    closeBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        banner.style.display = 'none';
+                        // 从本地列表中移除
+                        activeAnnouncements = activeAnnouncements.filter(a => a.id !== ann.id);
+                    });
+                    banner.appendChild(closeBtn);
+                    
+                    const contentSpan = document.createElement('span');
+                    contentSpan.className = 'announcement-content';
+                    contentSpan.innerHTML = `<span class="announcement-icon">📢</span> ${ann.content}`;
+                    banner.appendChild(contentSpan);
+                    
+                    const timeSpan = document.createElement('span');
+                    timeSpan.className = 'announcement-time';
+                    const pubTime = new Date(ann.publishedAt);
+                    timeSpan.textContent = `发布于 ${pubTime.toLocaleString()}`;
+                    if (ann.durationDays > 0) {
+                        timeSpan.textContent += ` · 有效期 ${ann.durationDays} 天`;
+                    }
+                    banner.appendChild(timeSpan);
+                    
+                    // 插入到消息容器最前面（在欢迎消息之后）
+                    if (firstChild && firstChild.classList && firstChild.classList.contains('system-message')) {
+                        messageContainer.insertBefore(banner, firstChild.nextSibling);
+                    } else if (firstChild) {
+                        messageContainer.insertBefore(banner, firstChild);
+                    } else {
+                        messageContainer.appendChild(banner);
+                    }
+                });
+            }
+            
             function renderChatList(){
                 chatList.innerHTML = '';
+                
+                // ===== 公共大厅 - 永远置顶 =====
                 const publicItem = document.createElement('div');
                 publicItem.className = 'chat-item' + (currentChat === 'public' ? ' active' : '');
+                publicItem.style.borderBottom = '2px solid #07c160';
                 publicItem.innerHTML = `<div class="chat-icon">🏠</div><div class="chat-info"><div class="chat-name">公共大厅</div><div class="chat-preview">${messageHistory.length > 0 ? messageHistory[messageHistory.length-1].text : '暂无消息'}</div></div>`;
                 publicItem.addEventListener('click', ()=> switchToPublicChat());
                 chatList.appendChild(publicItem);
                 
+                // ===== 排序好友列表：按最后消息时间排序 =====
+                const friendItems = [];
                 if(currentUser && currentUser.friends){
                     currentUser.friends.forEach(friend => {
                         const friendData = usersData[friend] || {};
-                        const friendItem = document.createElement('div');
-                        friendItem.className = 'chat-item' + (currentChat === 'private' && currentChatPartner === friend ? ' active' : '');
+                        const lastMessage = privateMessageHistory[friend]?.length ? 
+                            privateMessageHistory[friend][privateMessageHistory[friend].length-1] : null;
+                        const lastTime = lastMessage ? new Date(lastMessage.time).getTime() : 0;
                         const unreadCount = unreadCounts[friend] || 0;
-                        const lastMessage = privateMessageHistory[friend]?.length ? privateMessageHistory[friend][privateMessageHistory[friend].length-1].text : '开始聊天';
-                        friendItem.innerHTML = `<div class="chat-icon">💬</div><div class="chat-info"><div class="chat-name">${friendData.nickname || friend}</div><div class="chat-preview">${lastMessage}</div></div>${unreadCount > 0 ? `<span class="chat-badge show">${unreadCount}</span>` : ''}<button class="remove-friend-btn" data-username="${friend}">取消好友</button>`;
+                        const preview = lastMessage ? lastMessage.text : '开始聊天';
                         
-                        friendItem.addEventListener('click', (e)=> {
-                            if (e.target.classList.contains('remove-friend-btn')) return;
-                            switchToPrivateChat(friend);
+                        friendItems.push({
+                            friend,
+                            nickname: friendData.nickname || friend,
+                            lastTime,
+                            preview,
+                            unreadCount,
+                            lastMessage
                         });
-                        
-                        const removeBtn = friendItem.querySelector('.remove-friend-btn');
-                        removeBtn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            removeFriend(friend);
-                        });
-                        
-                        chatList.appendChild(friendItem);
                     });
                 }
                 
+                // 按最后消息时间降序排序（最新的在前）
+                friendItems.sort((a, b) => b.lastTime - a.lastTime);
+                
+                // 渲染好友列表
+                friendItems.forEach(item => {
+                    const friendItem = document.createElement('div');
+                    friendItem.className = 'chat-item' + (currentChat === 'private' && currentChatPartner === item.friend ? ' active' : '');
+                    friendItem.innerHTML = `<div class="chat-icon">💬</div><div class="chat-info"><div class="chat-name">${item.nickname}</div><div class="chat-preview">${item.preview}</div></div>${item.unreadCount > 0 ? `<span class="chat-badge show">${item.unreadCount}</span>` : ''}<button class="remove-friend-btn" data-username="${item.friend}">取消好友</button>`;
+                    
+                    friendItem.addEventListener('click', (e)=> {
+                        if (e.target.classList.contains('remove-friend-btn')) return;
+                        switchToPrivateChat(item.friend);
+                    });
+                    
+                    const removeBtn = friendItem.querySelector('.remove-friend-btn');
+                    removeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        removeFriend(item.friend);
+                    });
+                    
+                    chatList.appendChild(friendItem);
+                });
+                
+                // ===== 系统消息 =====
                 const systemItem = document.createElement('div');
                 systemItem.className = 'chat-item';
                 systemItem.style.cursor = 'pointer';
@@ -1423,7 +1654,10 @@
                 currentMessageElements = [];
                 if(messageHistory.length > 0){ messageHistory.forEach(msg => addMessageToUI(msg)); }
                 else messageContainer.innerHTML = '<div class="system-message">👋 欢迎来到聊天室</div>';
-                renderChatList(); handleMobileView();
+                // 渲染公告
+                renderAnnouncements();
+                renderChatList(); 
+                handleMobileView();
             }
             
             function switchToPrivateChat(friend){
@@ -1434,20 +1668,19 @@
                 const msgs = privateMessageHistory[friend] || [];
                 if(msgs.length > 0){ msgs.forEach(msg => addMessageToUI(msg)); }
                 else messageContainer.innerHTML = '<div class="system-message">开始聊天吧</div>';
-                renderChatList(); handleMobileView();
+                renderAnnouncements();
+                renderChatList(); 
+                handleMobileView();
             }
             
             function getWebSocketUrl() {
                 const host = window.location.host;
-                // 如果是本地开发环境（localhost 或 127.0.0.1），使用 ws://
                 if (host.includes('localhost') || host.includes('127.0.0.1')) {
                     return `ws://${host}/ws`;
                 }
-                // 如果部署到 Zeabur（域名包含 zeabur.app），使用 wss://
                 if (host.includes('zeabur.app')) {
                     return `wss://${host}/ws`;
                 }
-                // 其他情况：如果当前页面是 https，则使用 wss://，否则使用 ws://
                 if (window.location.protocol === 'https:') {
                     return `wss://${host}/ws`;
                 }
@@ -1466,7 +1699,7 @@
                             switch(data.type){
                                 case 'user_info': currentUser = { ...currentUser, ...data.user }; myNickname.textContent = currentUser.nickname; updateRoleBadge(); renderChatList(); break;
                                 case 'history':
-                                    if(data.messages){ messageHistory = data.messages; if(currentChat==='public'){ messageContainer.innerHTML=''; currentMessageElements=[]; messageHistory.forEach(msg=>addMessageToUI(msg)); if(messageHistory.length===0) messageContainer.innerHTML='<div class="system-message">👋 欢迎来到聊天室</div>'; } renderChatList(); }
+                                    if(data.messages){ messageHistory = data.messages; if(currentChat==='public'){ messageContainer.innerHTML=''; currentMessageElements=[]; messageHistory.forEach(msg=>addMessageToUI(msg)); if(messageHistory.length===0) messageContainer.innerHTML='<div class="system-message">👋 欢迎来到聊天室</div>'; renderAnnouncements(); } renderChatList(); }
                                     break;
                                 case 'private_history':
                                     if(data.messages){ data.messages.forEach(msg=>{ const partner = msg.from===currentUser.username ? msg.to : msg.from; if(!privateMessageHistory[partner]) privateMessageHistory[partner]=[]; privateMessageHistory[partner].push(msg); }); if(currentChat==='private'&&currentChatPartner) switchToPrivateChat(currentChatPartner); renderChatList(); }
@@ -1532,6 +1765,14 @@
                                 case 'appeal_result': if(data.decision==='accepted') addSystemMessage('✅ 你的申诉已被接受'); else addSystemMessage('❌ 你的申诉被拒绝'); break;
                                 case 'muted_notification': addSystemMessage(`🔇 你已被禁言！原因: ${data.reason||'违反规定'}`); break;
                                 case 'unmuted_notification': addSystemMessage('✅ 你已被解除禁言'); break;
+                                // ===== 系统公告 =====
+                                case 'system_announcements':
+                                    if(data.announcements) {
+                                        activeAnnouncements = data.announcements;
+                                        renderAnnouncements();
+                                        renderChatList();
+                                    }
+                                    break;
                                 case 'admin_data':
                                     if(data.dataType==='users'){ adminUsersList=data.users||[]; if(currentAdminTab==='users') renderAdminUsers(); }
                                     else if(data.dataType==='stats'){ adminStats=data.stats; if(currentAdminTab==='stats') renderAdminStats(); }
@@ -1629,7 +1870,167 @@
                 }
             }
             
-            function loadAdminData(){ if(!currentUser||(currentUser.role!=='super_admin'&&currentUser.role!=='admin')) return; if(socket&&socket.readyState===WebSocket.OPEN){ socket.send(JSON.stringify({type:'admin_get_users'})); socket.send(JSON.stringify({type:'admin_get_stats'})); socket.send(JSON.stringify({type:'admin_get_messages'})); if(currentUser.role==='super_admin') socket.send(JSON.stringify({type:'admin_get_logs'})); } else alert('连接断开'); renderAdminUsers(); }
+            function loadAdminData(){ 
+                if(!currentUser||(currentUser.role!=='super_admin'&&currentUser.role!=='admin')) return; 
+                if(socket&&socket.readyState===WebSocket.OPEN){ 
+                    socket.send(JSON.stringify({type:'admin_get_users'})); 
+                    socket.send(JSON.stringify({type:'admin_get_stats'})); 
+                    socket.send(JSON.stringify({type:'admin_get_messages'})); 
+                    if(currentUser.role==='super_admin') socket.send(JSON.stringify({type:'admin_get_logs'}));
+                    // 加载公告列表
+                    loadAnnouncementsList();
+                } else alert('连接断开'); 
+                renderAdminUsers(); 
+            }
+            
+            // ===== 公告管理功能 =====
+            async function loadAnnouncementsList() {
+                try {
+                    const resp = await fetch('/api/announcement/list');
+                    const data = await resp.json();
+                    if (data.success) {
+                        if (currentAdminTab === 'announcements') renderAdminAnnouncements(data.announcements);
+                    }
+                } catch(e) { console.error('加载公告列表失败', e); }
+            }
+            
+            function renderAdminAnnouncements(announcements) {
+                if (currentAdminTab !== 'announcements') return;
+                const now = Date.now();
+                const activeList = announcements.filter(a => !a.expiresAt || now < a.expiresAt);
+                const expiredList = announcements.filter(a => a.expiresAt && now >= a.expiresAt);
+                
+                let html = `<div class="admin-panel"><h3>📢 系统公告管理</h3>`;
+                
+                // 发布公告表单
+                html += `
+                    <div class="announcement-form">
+                        <h4 style="margin-bottom:10px;color:#1e293b;">发布新公告</h4>
+                        <textarea id="announcementContent" placeholder="输入公告内容..." maxlength="500"></textarea>
+                        <div class="form-row">
+                            <label>有效期（天）：</label>
+                            <input type="number" id="announcementDuration" value="7" min="0" max="365">
+                            <span style="font-size:0.8rem;color:#999;">（0表示永久）</span>
+                            <button class="btn btn-primary" id="publishAnnouncementBtn" style="padding:8px 20px;">发布公告</button>
+                        </div>
+                    </div>
+                `;
+                
+                // 有效公告列表
+                html += `<h4 style="margin:16px 0 8px;color:#1e293b;">有效公告（${activeList.length}）</h4>`;
+                if (activeList.length === 0) {
+                    html += `<p style="color:#999;font-size:0.9rem;">暂无有效公告</p>`;
+                } else {
+                    activeList.forEach(ann => {
+                        html += `
+                            <div class="announcement-card">
+                                <div class="announcement-text">${ann.content}</div>
+                                <div class="announcement-meta">
+                                    <span>📅 ${new Date(ann.publishedAt).toLocaleString()}</span>
+                                    <span>⏳ 剩余 ${ann.durationDays > 0 ? Math.ceil((ann.expiresAt - now) / (24*60*60*1000)) + ' 天' : '永久'}</span>
+                                    <span>👤 ${ann.publisher || '系统管理员'}</span>
+                                </div>
+                                <div class="announcement-actions">
+                                    <button class="btn btn-danger" onclick="deleteAnnouncement('${ann.id}')">删除</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                // 已过期公告列表
+                if (expiredList.length > 0) {
+                    html += `<h4 style="margin:16px 0 8px;color:#999;">已过期公告（${expiredList.length}）</h4>`;
+                    expiredList.forEach(ann => {
+                        html += `
+                            <div class="announcement-card" style="background:#f5f5f5;border-color:#ddd;opacity:0.7;">
+                                <div class="announcement-text">${ann.content}</div>
+                                <div class="announcement-meta">
+                                    <span>📅 ${new Date(ann.publishedAt).toLocaleString()}</span>
+                                    <span>⏳ 已过期</span>
+                                    <span>👤 ${ann.publisher || '系统管理员'}</span>
+                                </div>
+                                <div class="announcement-actions">
+                                    <button class="btn btn-danger" onclick="deleteAnnouncement('${ann.id}')">删除</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                html += `</div>`;
+                adminContent.innerHTML = html;
+                
+                // 绑定发布事件
+                const publishBtn = document.getElementById('publishAnnouncementBtn');
+                if (publishBtn) {
+                    publishBtn.addEventListener('click', publishAnnouncement);
+                }
+            }
+            
+            async function publishAnnouncement() {
+                const content = document.getElementById('announcementContent')?.value.trim();
+                const duration = parseInt(document.getElementById('announcementDuration')?.value) || 7;
+                
+                if (!content) {
+                    alert('请输入公告内容');
+                    return;
+                }
+                
+                try {
+                    const resp = await fetch('/api/announcement/publish', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            content,
+                            durationDays: duration,
+                            publisher: currentUser.nickname || currentUser.username
+                        })
+                    });
+                    const data = await resp.json();
+                    if (data.success) {
+                        alert('公告发布成功！');
+                        document.getElementById('announcementContent').value = '';
+                        loadAnnouncementsList();
+                        // 刷新公告显示
+                        if (socket && socket.readyState === WebSocket.OPEN) {
+                            socket.send(JSON.stringify({ type: 'refresh_announcements' }));
+                        }
+                    } else {
+                        alert(data.message || '发布失败');
+                    }
+                } catch(e) {
+                    alert('网络错误');
+                }
+            }
+            
+            // 全局删除公告函数
+            window.deleteAnnouncement = async function(announcementId) {
+                if (!confirm('确定要删除此公告吗？')) return;
+                try {
+                    const resp = await fetch('/api/announcement/delete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            announcementId,
+                            adminUsername: currentUser.username
+                        })
+                    });
+                    const data = await resp.json();
+                    if (data.success) {
+                        alert('公告已删除');
+                        loadAnnouncementsList();
+                        // 刷新公告显示
+                        if (socket && socket.readyState === WebSocket.OPEN) {
+                            socket.send(JSON.stringify({ type: 'refresh_announcements' }));
+                        }
+                    } else {
+                        alert(data.message || '删除失败');
+                    }
+                } catch(e) {
+                    alert('网络错误');
+                }
+            };
             
             function renderAdminUsers(){ if(currentAdminTab!=='users') return; let html=`<div class="admin-panel"><h3>用户管理</h3><input type="text" id="adminSearchUser" placeholder="搜索用户..." style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;margin-bottom:10px;"><div style="overflow-x:auto;"><table><thead><tr><th>用户名</th><th>昵称</th><th>角色</th><th>状态</th><th>操作</th></tr></thead><tbody>${adminUsersList.map(user=>`<tr><td>${user.username}</td><td>${user.nickname}</td><td>${user.role==='super_admin'?'👑超级管理员':user.role==='admin'?'🛡️管理员':'👤用户'}</td><td>${user.banned?'⛔封禁':user.muted?'🔇禁言':user.online?'🟢在线':'⚪离线'}</td><td>${currentUser.role==='super_admin'&&user.role!=='super_admin'?`<button class="btn btn-warning" onclick="toggleAdminRole('${user.username}','${user.role}')">${user.role==='admin'?'取消管理员':'设为管理员'}</button>`:''}${user.role!=='super_admin'?`<button class="btn ${user.muted?'btn-primary':'btn-warning'}" onclick="${user.muted?`unmuteUser('${user.username}')`:`muteUser('${user.username}')`}">${user.muted?'解禁':'禁言'}</button><button class="btn ${user.banned?'btn-primary':'btn-danger'}" onclick="toggleBanUser('${user.username}',${user.banned})">${user.banned?'解封':'封禁'}</button><button class="btn btn-danger" onclick="deleteUser('${user.username}')">删除</button><button class="btn btn-secondary" onclick="resetPassword('${user.username}')">重置密码</button>`:''}</td></tr>`).join('')}</tbody></table></div></div>`; adminContent.innerHTML=html; const searchInput=document.getElementById('adminSearchUser'); if(searchInput) searchInput.addEventListener('input',function(){const term=this.value.toLowerCase(); document.querySelectorAll('#adminContent tbody tr').forEach(row=>row.style.display=row.textContent.toLowerCase().includes(term)?'':'none');}); }
             
@@ -1649,7 +2050,17 @@
             window.deleteMessage=function(id){if(confirm('删除此消息?')){socket?.send(JSON.stringify({type:'admin_delete_message',messageId:id})); setTimeout(loadAdminData,500);}};
             window.recallMessage=function(id){if(confirm('撤回此消息?')){socket?.send(JSON.stringify({type:'admin_recall_message',messageId:id})); setTimeout(loadAdminData,500);}};
             
-            adminTabs.addEventListener('click', function(e){ const tab=e.target.closest('.tab'); if(!tab)return; adminTabs.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); currentAdminTab=tab.dataset.tab; if(currentAdminTab==='users')renderAdminUsers(); else if(currentAdminTab==='messages')renderAdminMessages(); else if(currentAdminTab==='stats')renderAdminStats(); else if(currentAdminTab==='logs')renderAdminLogs(); });
+            adminTabs.addEventListener('click', function(e){ 
+                const tab=e.target.closest('.tab'); if(!tab)return; 
+                adminTabs.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); 
+                tab.classList.add('active'); 
+                currentAdminTab=tab.dataset.tab; 
+                if(currentAdminTab==='users')renderAdminUsers(); 
+                else if(currentAdminTab==='messages')renderAdminMessages(); 
+                else if(currentAdminTab==='stats')renderAdminStats(); 
+                else if(currentAdminTab==='announcements')loadAnnouncementsList();
+                else if(currentAdminTab==='logs')renderAdminLogs(); 
+            });
             
             systemChatBtn.addEventListener('click', showSystemChat);
             
@@ -1843,6 +2254,7 @@
                 } else if (currentChat === 'private') {
                     messageContainer.innerHTML = '<div class="system-message">💬 私聊记录已清空</div>';
                 }
+                renderAnnouncements();
             });
             
             function setupEventListeners(){
