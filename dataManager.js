@@ -2,7 +2,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const DATA_DIR = path.join(__dirname, 'data');
+// ✅ 关键修改：如果是 Railway 环境，使用 /data（永久保存），否则用本地 data 目录
+const DATA_DIR = process.env.RAILWAY_ENVIRONMENT ? '/data' : path.join(__dirname, 'data');
 
 // 确保数据目录存在
 if (!fs.existsSync(DATA_DIR)) {
