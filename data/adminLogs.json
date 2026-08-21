@@ -1,0 +1,80 @@
+[
+  {
+    "admin": "zuijiawzy",
+    "action": "删除用户",
+    "details": "test",
+    "time": "2026-08-19T04:21:34.516Z"
+  },
+  {
+    "admin": "zuijiawzy",
+    "action": "删除用户",
+    "details": "xiaoming",
+    "time": "2026-08-19T04:21:36.065Z"
+  },
+  {
+    "admin": "zuijiawzy",
+    "action": "设为管理员",
+    "details": "wudy",
+    "time": "2026-08-19T04:37:04.794Z"
+  },
+  {
+    "admin": "zuijiawzy",
+    "action": "设为管理员",
+    "details": "asdfghjkl",
+    "time": "2026-08-20T05:05:28.447Z"
+  },
+  {
+    "admin": "asdfghjkl",
+    "action": "封禁用户",
+    "details": "asdfghjkl - 原因:  - 时长: 24小时",
+    "time": "2026-08-20T05:06:13.203Z"
+  },
+  {
+    "admin": "zuijiawzy",
+    "action": "解封用户",
+    "details": "asdfghjkl",
+    "time": "2026-08-20T05:06:32.324Z"
+  },
+  {
+    "admin": "zuijiawzy",
+    "action": "取消管理员",
+    "details": "asdfghjkl",
+    "time": "2026-08-20T05:06:55.891Z"
+  },
+  {
+    "admin": "zuijiawzy",
+    "action": "撤回消息",
+    "details": "801e0806-9921-479a-9a7f-15625619b66d",
+    "time": "2026-08-20T05:11:12.679Z"
+  },
+  {
+    "admin": "zuijiawzy",
+    "action": "设为管理员",
+    "details": "张妮可",
+    "time": "2026-08-20T05:16:07.052Z"
+  },
+  {
+    "admin": "zuijiawzy",
+    "action": "设为管理员",
+    "details": "891",
+    "time": "2026-08-20T05:22:16.323Z"
+  },
+  {
+    "admin": "zuijiawzy",
+    "action": "撤回消息",
+    "details": "568998ff-d67b-4fa2-bbb0-8100361da96d",
+    "time": "2026-08-20T05:25:39.836Z"
+  },
+  {
+    "admin": "zuijiawzy",
+    "action": "重置密码",
+    "details": "123456",
+    "time": "2026-08-20T05:30:30.266Z"
+  },
+  {
+    "admin": "zuijiawzy",
+    "action": "设为管理员",
+    "details": "123456",
+    "time": "2026-08-20T05:30:52.757Z"
+  }
+]

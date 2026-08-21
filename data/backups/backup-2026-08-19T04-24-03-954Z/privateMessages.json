@@ -1,0 +1,28 @@
+{
+  "test": [
+    {
+      "id": "da77e921-920d-4ced-9a3a-f341e15bf545",
+      "from": "zuijiawzy",
+      "fromNickname": "站长",
+      "to": "test",
+      "toNickname": "test",
+      "text": "6",
+      "time": "2026-08-19T04:23:18.375Z",
+      "type": "private",
+      "scope": "private"
+    }
+  ],
+  "zuijiawzy": [
+    {
+      "id": "da77e921-920d-4ced-9a3a-f341e15bf545",
+      "from": "zuijiawzy",
+      "fromNickname": "站长",
+      "to": "test",
+      "toNickname": "test",
+      "text": "6",
+      "time": "2026-08-19T04:23:18.375Z",
+      "type": "private",
+      "scope": "private"
+    }
+  ]
+}

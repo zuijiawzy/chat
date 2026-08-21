@@ -1,0 +1,130 @@
+{
+  "891": {
+    "password": "260820",
+    "nickname": "891",
+    "bio": "",
+    "birthYear": null,
+    "country": "",
+    "location": "",
+    "friends": [
+      "zuijiawzy"
+    ],
+    "online": true,
+    "role": "admin",
+    "banned": false,
+    "banReason": "",
+    "banUntil": null,
+    "muted": false,
+    "muteReason": "",
+    "muteUntil": null,
+    "registeredAt": "2026-08-20T05:20:08.446Z",
+    "lastLoginAt": "2026-08-20T05:22:38.994Z"
+  },
+  "123456": {
+    "password": "123456",
+    "nickname": "123456",
+    "bio": "",
+    "birthYear": null,
+    "country": "",
+    "location": "",
+    "friends": [],
+    "online": false,
+    "role": "admin",
+    "banned": false,
+    "banReason": "",
+    "banUntil": null,
+    "muted": false,
+    "muteReason": "",
+    "muteUntil": null,
+    "registeredAt": "2026-08-19T04:32:53.695Z",
+    "lastLoginAt": "2026-08-20T05:08:42.230Z"
+  },
+  "zuijiawzy": {
+    "password": "zjwzy1111aw",
+    "nickname": "最佳五只鱼",
+    "bio": "网站超级管理员",
+    "birthYear": 2011,
+    "country": "中国",
+    "location": "安徽",
+    "friends": [
+      "test",
+      "wudy",
+      "asdfghjkl",
+      "张妮可",
+      "891"
+    ],
+    "online": true,
+    "role": "super_admin",
+    "banned": false,
+    "banReason": "",
+    "banUntil": null,
+    "muted": false,
+    "muteReason": "",
+    "muteUntil": null,
+    "registeredAt": "2026-08-19T04:19:13.353Z",
+    "lastLoginAt": "2026-08-20T05:04:48.465Z"
+  },
+  "wudy": {
+    "password": "18791221",
+    "nickname": "wudy",
+    "bio": "管理员",
+    "birthYear": null,
+    "country": "",
+    "location": "",
+    "friends": [
+      "zuijiawzy"
+    ],
+    "online": false,
+    "role": "admin",
+    "banned": false,
+    "banReason": "",
+    "banUntil": null,
+    "muted": false,
+    "muteReason": "",
+    "muteUntil": null,
+    "registeredAt": "2026-08-19T04:34:38.050Z",
+    "lastLoginAt": "2026-08-19T04:53:51.120Z"
+  },
+  "asdfghjkl": {
+    "password": "lkjhgfdsa",
+    "nickname": "神",
+    "bio": "",
+    "birthYear": null,
+    "country": "",
+    "location": "",
+    "friends": [
+      "zuijiawzy"
+    ],
+    "online": false,
+    "role": "user",
+    "banned": false,
+    "banReason": "",
+    "banUntil": null,
+    "muted": false,
+    "muteReason": "",
+    "muteUntil": null,
+    "registeredAt": "2026-08-20T05:04:21.295Z",
+    "lastLoginAt": "2026-08-20T05:07:54.619Z"
+  },
+  "张妮可": {
+    "password": "zhangnike1009",
+    "nickname": "张妮可",
+    "bio": "",
+    "birthYear": null,
+    "country": "",
+    "location": "",
+    "friends": [
+      "zuijiawzy"
+    ],
+    "online": true,
+    "role": "admin",
+    "banned": false,
+    "banReason": "",
+    "banUntil": null,
+    "muted": false,
+    "muteReason": "",
+    "muteUntil": null,
+    "registeredAt": "2026-08-20T05:14:47.644Z",
+    "lastLoginAt": "2026-08-20T05:35:06.272Z"
+  }
+}

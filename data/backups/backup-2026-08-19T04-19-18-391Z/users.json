@@ -1,0 +1,66 @@
+{
+  "test": {
+    "password": "123456",
+    "nickname": "测试用户",
+    "bio": "这个人很懒，什么都没写",
+    "birthYear": 1995,
+    "country": "中国",
+    "location": "北京",
+    "friends": [
+      "xiaoming",
+      "zuijiawzy"
+    ],
+    "online": false,
+    "role": "user",
+    "banned": false,
+    "banReason": "",
+    "banUntil": null,
+    "muted": false,
+    "muteReason": "",
+    "muteUntil": null,
+    "registeredAt": "2026-08-19T04:19:13.237Z",
+    "lastLoginAt": null
+  },
+  "xiaoming": {
+    "password": "123456",
+    "nickname": "小明",
+    "bio": "你好，我是小明",
+    "birthYear": 1998,
+    "country": "中国",
+    "location": "上海",
+    "friends": [
+      "test"
+    ],
+    "online": false,
+    "role": "user",
+    "banned": false,
+    "banReason": "",
+    "banUntil": null,
+    "muted": false,
+    "muteReason": "",
+    "muteUntil": null,
+    "registeredAt": "2026-08-19T04:19:13.353Z",
+    "lastLoginAt": null
+  },
+  "zuijiawzy": {
+    "password": "zjwzy1111aw",
+    "nickname": "站长",
+    "bio": "网站超级管理员",
+    "birthYear": 2011,
+    "country": "中国",
+    "location": "安徽",
+    "friends": [
+      "test"
+    ],
+    "online": false,
+    "role": "super_admin",
+    "banned": false,
+    "banReason": "",
+    "banUntil": null,
+    "muted": false,
+    "muteReason": "",
+    "muteUntil": null,
+    "registeredAt": "2026-08-19T04:19:13.353Z",
+    "lastLoginAt": null
+  }
+}

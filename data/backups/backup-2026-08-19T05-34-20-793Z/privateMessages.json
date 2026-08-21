@@ -1,0 +1,470 @@
+{
+  "test": [
+    {
+      "id": "da77e921-920d-4ced-9a3a-f341e15bf545",
+      "from": "zuijiawzy",
+      "fromNickname": "站长",
+      "to": "test",
+      "toNickname": "test",
+      "text": "6",
+      "time": "2026-08-19T04:23:18.375Z",
+      "type": "private",
+      "scope": "private"
+    }
+  ],
+  "zuijiawzy": [
+    {
+      "id": "da77e921-920d-4ced-9a3a-f341e15bf545",
+      "from": "zuijiawzy",
+      "fromNickname": "站长",
+      "to": "test",
+      "toNickname": "test",
+      "text": "6",
+      "time": "2026-08-19T04:23:18.375Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "43b3fd8e-12b9-44d9-9a6f-e220afc8fa82",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "111",
+      "time": "2026-08-19T04:48:52.043Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "fe8fd249-cb07-4182-b885-273bffa2fde3",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "55",
+      "time": "2026-08-19T04:48:57.491Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "2a75a23c-fbc1-447b-9ae8-470999f73020",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "6",
+      "time": "2026-08-19T04:49:14.258Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "1a94e9a0-50b2-4a2e-af39-6b123dc6d045",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "😉😉😉",
+      "time": "2026-08-19T04:49:17.323Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "a471430d-4454-4de2-b748-79b5952c4077",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "？",
+      "time": "2026-08-19T04:49:32.547Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "4132cffc-73ea-4d6c-8847-63c6c72f00c3",
+      "from": "wudy",
+      "fromNickname": "wudy",
+      "to": "zuijiawzy",
+      "toNickname": "最佳五只鱼",
+      "text": "OK",
+      "time": "2026-08-19T04:50:28.963Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "992f0395-979a-478c-aad8-6940f6c881a7",
+      "from": "wudy",
+      "fromNickname": "wudy",
+      "to": "zuijiawzy",
+      "toNickname": "最佳五只鱼",
+      "text": "发现了",
+      "time": "2026-08-19T04:50:33.425Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "e0350d45-17b2-42b8-bf43-1d7664e06880",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "哦",
+      "time": "2026-08-19T04:50:37.922Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "07c1e4d2-b28d-4401-aed7-a86da4b5c193",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "你应该也注意到了",
+      "time": "2026-08-19T04:50:43.498Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "e29310a8-2c3e-44b1-a49f-84bf289f8654",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "手机版",
+      "time": "2026-08-19T04:50:47.450Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "4109cfb6-a438-45c8-921e-4b50919f270d",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "那个发送溢出屏幕了吧",
+      "time": "2026-08-19T04:50:56.890Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "5dcb8019-6904-4a60-bcfc-26226579c04f",
+      "from": "wudy",
+      "fromNickname": "wudy",
+      "to": "zuijiawzy",
+      "toNickname": "最佳五只鱼",
+      "text": "是的",
+      "time": "2026-08-19T04:51:13.604Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "d024b7fa-9e3e-4f0b-88b3-10dd16988ad5",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "我可以给你我这个超级管理员的账号玩玩😀",
+      "time": "2026-08-19T04:51:25.706Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "f7e81a79-ccb9-4330-b519-5d69eece0217",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "你可以退出一下",
+      "time": "2026-08-19T04:51:40.193Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "8c72c2bc-da25-43d1-a469-6c8bc6ad7e1a",
+      "from": "wudy",
+      "fromNickname": "wudy",
+      "to": "zuijiawzy",
+      "toNickname": "最佳五只鱼",
+      "text": "OK",
+      "time": "2026-08-19T04:51:46.421Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "801e0806-9921-479a-9a7f-15625619b66d",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "我密码是zjwzy1111aw",
+      "time": "2026-08-19T04:51:50.185Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "c901df3e-7ad6-4dd6-a596-76e49f676987",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "我playok密码也是这个",
+      "time": "2026-08-19T04:51:58.345Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "49e7110e-e24d-43d3-a96b-99545cf232c1",
+      "from": "wudy",
+      "fromNickname": "wudy",
+      "to": "zuijiawzy",
+      "toNickname": "最佳五只鱼",
+      "text": "WOW",
+      "time": "2026-08-19T04:52:05.540Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "25fab734-beac-499c-b077-c3d5df108117",
+      "from": "wudy",
+      "fromNickname": "wudy",
+      "to": "zuijiawzy",
+      "toNickname": "最佳五只鱼",
+      "text": "必须品鉴",
+      "time": "2026-08-19T04:52:10.812Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "b93210af-8f0f-4aef-bd9c-a11ed34fe02b",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "ok你去试试吧",
+      "time": "2026-08-19T04:52:13.025Z",
+      "type": "private",
+      "scope": "private"
+    }
+  ],
+  "wudy": [
+    {
+      "id": "43b3fd8e-12b9-44d9-9a6f-e220afc8fa82",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "111",
+      "time": "2026-08-19T04:48:52.043Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "fe8fd249-cb07-4182-b885-273bffa2fde3",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "55",
+      "time": "2026-08-19T04:48:57.491Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "2a75a23c-fbc1-447b-9ae8-470999f73020",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "6",
+      "time": "2026-08-19T04:49:14.258Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "1a94e9a0-50b2-4a2e-af39-6b123dc6d045",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "😉😉😉",
+      "time": "2026-08-19T04:49:17.323Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "a471430d-4454-4de2-b748-79b5952c4077",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "？",
+      "time": "2026-08-19T04:49:32.547Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "4132cffc-73ea-4d6c-8847-63c6c72f00c3",
+      "from": "wudy",
+      "fromNickname": "wudy",
+      "to": "zuijiawzy",
+      "toNickname": "最佳五只鱼",
+      "text": "OK",
+      "time": "2026-08-19T04:50:28.963Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "992f0395-979a-478c-aad8-6940f6c881a7",
+      "from": "wudy",
+      "fromNickname": "wudy",
+      "to": "zuijiawzy",
+      "toNickname": "最佳五只鱼",
+      "text": "发现了",
+      "time": "2026-08-19T04:50:33.425Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "e0350d45-17b2-42b8-bf43-1d7664e06880",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "哦",
+      "time": "2026-08-19T04:50:37.922Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "07c1e4d2-b28d-4401-aed7-a86da4b5c193",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "你应该也注意到了",
+      "time": "2026-08-19T04:50:43.498Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "e29310a8-2c3e-44b1-a49f-84bf289f8654",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "手机版",
+      "time": "2026-08-19T04:50:47.450Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "4109cfb6-a438-45c8-921e-4b50919f270d",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "那个发送溢出屏幕了吧",
+      "time": "2026-08-19T04:50:56.890Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "5dcb8019-6904-4a60-bcfc-26226579c04f",
+      "from": "wudy",
+      "fromNickname": "wudy",
+      "to": "zuijiawzy",
+      "toNickname": "最佳五只鱼",
+      "text": "是的",
+      "time": "2026-08-19T04:51:13.604Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "d024b7fa-9e3e-4f0b-88b3-10dd16988ad5",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "我可以给你我这个超级管理员的账号玩玩😀",
+      "time": "2026-08-19T04:51:25.706Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "f7e81a79-ccb9-4330-b519-5d69eece0217",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "你可以退出一下",
+      "time": "2026-08-19T04:51:40.193Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "8c72c2bc-da25-43d1-a469-6c8bc6ad7e1a",
+      "from": "wudy",
+      "fromNickname": "wudy",
+      "to": "zuijiawzy",
+      "toNickname": "最佳五只鱼",
+      "text": "OK",
+      "time": "2026-08-19T04:51:46.421Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "801e0806-9921-479a-9a7f-15625619b66d",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "我密码是zjwzy1111aw",
+      "time": "2026-08-19T04:51:50.185Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "c901df3e-7ad6-4dd6-a596-76e49f676987",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "我playok密码也是这个",
+      "time": "2026-08-19T04:51:58.345Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "49e7110e-e24d-43d3-a96b-99545cf232c1",
+      "from": "wudy",
+      "fromNickname": "wudy",
+      "to": "zuijiawzy",
+      "toNickname": "最佳五只鱼",
+      "text": "WOW",
+      "time": "2026-08-19T04:52:05.540Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "25fab734-beac-499c-b077-c3d5df108117",
+      "from": "wudy",
+      "fromNickname": "wudy",
+      "to": "zuijiawzy",
+      "toNickname": "最佳五只鱼",
+      "text": "必须品鉴",
+      "time": "2026-08-19T04:52:10.812Z",
+      "type": "private",
+      "scope": "private"
+    },
+    {
+      "id": "b93210af-8f0f-4aef-bd9c-a11ed34fe02b",
+      "from": "zuijiawzy",
+      "fromNickname": "最佳五只鱼",
+      "to": "wudy",
+      "toNickname": "wudy",
+      "text": "ok你去试试吧",
+      "time": "2026-08-19T04:52:13.025Z",
+      "type": "private",
+      "scope": "private"
+    }
+  ]
+}

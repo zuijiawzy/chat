@@ -1,0 +1,23 @@
+{
+  "zuijiawzy": {
+    "password": "zjwzy1111aw",
+    "nickname": "站长",
+    "bio": "网站超级管理员",
+    "birthYear": 2011,
+    "country": "中国",
+    "location": "安徽",
+    "friends": [
+      "test"
+    ],
+    "online": false,
+    "role": "super_admin",
+    "banned": false,
+    "banReason": "",
+    "banUntil": null,
+    "muted": false,
+    "muteReason": "",
+    "muteUntil": null,
+    "registeredAt": "2026-08-19T04:19:13.353Z",
+    "lastLoginAt": "2026-08-19T04:20:18.483Z"
+  }
+}

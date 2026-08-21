@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>在线聊天</title>
+    <style>
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #ededed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .auth-container {
+            max-width: 400px;
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 40px 32px;
+            margin: 20px;
+        }
+        .auth-container h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .auth-container .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 32px;
+            font-size: 0.95rem;
+        }
+        .auth-container input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d8dfe8;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background: #f8fafc;
+            transition: 0.15s;
+            margin-bottom: 14px;
+        }
+        .auth-container input:focus {
+            border-color: #07c160;
+            background: white;
+            box-shadow: 0 0 0 2px rgba(7, 193, 96, 0.1);
+        }
+        .auth-container button {
+            width: 100%;
+            padding: 12px;
+            background: #07c160;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+            margin-top: 4px;
+        }
+        .auth-container button:hover { background: #06ad56; }
+        .auth-container button:active { background: #059048; }
+        .auth-container .toggle-link {
+            text-align: center;
+            margin-top: 16px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        .auth-container .toggle-link span {
+            color: #07c160;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .auth-container .error-msg {
+            color: #dc2626;
+            font-size: 0.85rem;
+            text-align: center;
+            margin-bottom: 12px;
+            min-height: 20px;
+        }
+        
+        .appeal-btn {
+            width: 100%;
+            padding: 12px;
+            background: #f59e0b;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+            margin-top: 10px;
+        }
+        .appeal-btn:hover { background: #d97706; }
+        
+        .chat-app {
+            width: 100%;
+            height: 100vh;
+            background: #ededed;
+            display: none;
+            flex-direction: row;
+            overflow: hidden;
+        }
+        .chat-app.active { display: flex; }
+        
+        .sidebar {
+            width: 300px;
+            min-width: 300px;
+            background: #f7f7f7;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 10;
+        }
+        .sidebar-header {
+            padding: 15px 20px;
+            background: #ededed;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .sidebar-header .user-info {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            flex: 1;
+        }
+        .sidebar-header .user-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1.1rem;
+        }
+        .sidebar-header .user-role-badge {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            font-weight: 500;
+        }
+        .user-role-badge.super-admin {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #78350f;
+        }
+        .user-role-badge.admin {
+            background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+            color: #ede9fe;
+        }
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: 0.1s;
+            border-bottom: 1px solid #f0f0f0;
+            background: #f7f7f7;
+            position: relative;
+        }
+        .chat-item:hover { background: #e8e8e8; }
+        .chat-item.active { background: #d4d4d4; }
+        .chat-item .chat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            background: #07c160;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .chat-item .chat-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .chat-item .chat-name {
+            font-weight: 500;
+            color: #1e293b;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+        .chat-item .chat-preview {
+            font-size: 0.8rem;
+            color: #999;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .chat-item .chat-badge {
+            background: #f5222d;
+            color: white;
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 8px;
+            display: none;
+        }
+        .chat-item .chat-badge.show { display: inline-block; }
+        
+        .system-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #f5222d;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            display: none;
+        }
+        .system-badge.show { display: block; }
+        
+        .main-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            background: #f5f5f5;
+            position: relative;
+        }
+        .chat-header {
+            padding: 12px 20px;
+            background: #ededed;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 5;
+            flex-wrap: wrap;
+        }
+        .chat-header .back-btn {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: 0.1s;
+            color: #333;
+            background: none;
+            border: none;
+        }
+        .chat-header .back-btn:hover { background: #ddd; }
+        .chat-header h2 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #1e293b;
+            flex: 1;
+            min-width: 80px;
+        }
+        .chat-header .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .chat-header .header-actions span {
+            font-size: 0.8rem;
+            color: #666;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 4px;
+            transition: 0.15s;
+            white-space: nowrap;
+        }
+        .chat-header .header-actions span:hover {
+            background: rgba(0,0,0,0.05);
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 20px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 0;
+            -webkit-overflow-scrolling: touch;
+        }
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 60%;
+            word-wrap: break-word;
+            position: relative;
+        }
+        .message-content {
+            padding: 10px 14px;
+            border-radius: 4px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            background: white;
+            color: #1e293b;
+            position: relative;
+        }
+        .message.self {
+            align-self: flex-end;
+        }
+        .message.self .message-content {
+            background: #95ec69;
+        }
+        .message .sender-name {
+            font-size: 0.75rem;
+            color: #999;
+            margin-bottom: 4px;
+            cursor: pointer;
+        }
+        .message .sender-name:hover {
+            color: #07c160;
+            text-decoration: underline;
+        }
+        .message .message-time {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 4px;
+            align-self: flex-end;
+        }
+        .system-message {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #999;
+            padding: 4px 0;
+            align-self: center;
+        }
+        
+        .system-notification {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin: 5px 0;
+            align-self: center;
+            max-width: 85%;
+            width: auto;
+        }
+        .system-notification .notification-content {
+            font-size: 0.9rem;
+            color: #856404;
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+        .system-notification .notification-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+        .system-notification .notification-actions button {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .system-notification .btn-accept {
+            background: #07c160;
+            color: white;
+        }
+        .system-notification .btn-accept:hover { background: #06ad56; }
+        .system-notification .btn-reject {
+            background: #dc2626;
+            color: white;
+        }
+        .system-notification .btn-reject:hover { background: #b91c1c; }
+        
+        .chat-input-area {
+            display: flex;
+            border-top: 1px solid #e0e0e0;
+            padding: 10px 15px;
+            background: #f7f7f7;
+            gap: 8px;
+            align-items: center;
+            position: relative;
+            flex-wrap: nowrap;
+        }
+        .chat-input-area input {
+            flex: 1;
+            min-width: 0;
+            padding: 10px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            outline: none;
+            background: white;
+            transition: 0.15s;
+            width: 100%;
+        }
+        .chat-input-area input:focus {
+            border-color: #07c160;
+        }
+        .chat-input-area button {
+            background: #07c160;
+            border: none;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .chat-input-area button:hover { background: #06ad56; }
+        .chat-input-area button:active { background: #059048; }
+        
+        .emoji-btn {
+            background: none !important;
+            border: none !important;
+            color: #666 !important;
+            font-size: 1.5rem !important;
+            padding: 5px 8px !important;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .emoji-picker {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            right: 15px;
+            width: 320px;
+            max-width: 90vw;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 1000;
+            overflow: hidden;
+        }
+        .emoji-picker.active { display: block; }
+        .emoji-picker-header {
+            display: flex;
+            border-bottom: 1px solid #f0f0f0;
+            background: #f7f7f7;
+        }
+        .emoji-category {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: 0.15s;
+            border-bottom: 2px solid transparent;
+        }
+        .emoji-category:hover { background: #e8e8e8; }
+        .emoji-category.active {
+            border-bottom-color: #07c160;
+            background: white;
+        }
+        .emoji-picker-body {
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 5px;
+        }
+        .emoji-item {
+            font-size: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: 0.15s;
+        }
+        .emoji-item:hover {
+            background: #f0f0f0;
+            transform: scale(1.2);
+        }
+        .emoji-page-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            padding: 8px;
+            background: #f7f7f7;
+        }
+        .emoji-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ddd;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .emoji-dot.active {
+            background: #07c160;
+            width: 15px;
+            border-radius: 3px;
+        }
+        
+        .search-container {
+            position: relative;
+            padding: 10px 20px;
+            background: #f7f7f7;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .search-input {
+            width: 100%;
+            padding: 8px 35px 8px 30px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            outline: none;
+            background: white;
+        }
+        .search-input:focus {
+            border-color: #07c160;
+        }
+        .search-icon {
+            position: absolute;
+            left: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 0.9rem;
+        }
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 20px;
+            right: 20px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+        .search-results.active { display: block; }
+        .search-result-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.85rem;
+        }
+        .search-result-item:hover {
+            background: #f0f0f0;
+        }
+        .search-result-item .highlight {
+            background: yellow;
+            font-weight: 500;
+        }
+        .message-content .highlight {
+            background: yellow;
+            font-weight: 500;
+        }
+        
+        .clear-chat-btn {
+            background: none !important;
+            border: none !important;
+            color: #666 !important;
+            padding: 5px 10px !important;
+            cursor: pointer;
+            font-size: 1.2rem !important;
+        }
+        
+        .remove-friend-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #f5222d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: none;
+        }
+        .chat-item:hover .remove-friend-btn {
+            display: block;
+        }
+        .remove-friend-btn:hover {
+            background: #d9363e;
+        }
+        
+        .bottom-nav {
+            display: none;
+            background: #f7f7f7;
+            border-top: 1px solid #e0e0e0;
+            padding: 8px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+        }
+        .bottom-nav .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 4px 0;
+            transition: 0.15s;
+            color: #999;
+        }
+        .bottom-nav .nav-item.active {
+            color: #07c160;
+        }
+        .bottom-nav .nav-item .nav-icon {
+            font-size: 1.4rem;
+            margin-bottom: 2px;
+        }
+        .bottom-nav .nav-item .nav-label {
+            font-size: 0.7rem;
+        }
+        
+        .settings-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #f5f5f5;
+            z-index: 300;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .settings-page.active { display: flex; }
+        .settings-header {
+            padding: 15px 20px;
+            background: #ededed;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .settings-header .back-btn {
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: 0.1s;
+            color: #333;
+            background: none;
+            border: none;
+        }
+        .settings-header .back-btn:hover { background: #ddd; }
+        .settings-header h2 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #1e293b;
+            flex: 1;
+        }
+        .settings-content {
+            flex: 1;
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .profile-card {
+            background: white;
+            border-radius: 8px;
+            padding: 30px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #07c160;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 15px;
+            color: white;
+        }
+        .profile-avatar.super-admin {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        }
+        .profile-avatar.admin {
+            background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+        }
+        .profile-username {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+        .profile-username.super-admin { color: #f59e0b; }
+        .profile-username.admin { color: #8b5cf6; }
+        .profile-userid { text-align: center; font-size: 0.85rem; color: #999; margin-bottom: 5px; }
+        .profile-role { text-align: center; font-size: 0.85rem; margin-bottom: 20px; font-weight: 500; }
+        .profile-role.super-admin { color: #f59e0b; }
+        .profile-role.admin { color: #8b5cf6; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 5px; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 10px 14px; border: 1px solid #d8dfe8; border-radius: 6px; font-size: 0.95rem; outline: none; background: #f8fafc; transition: 0.15s; font-family: inherit;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: #07c160; background: white; box-shadow: 0 0 0 2px rgba(7,193,96,0.1); }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .save-btn { width: 100%; padding: 12px; background: #07c160; border: none; color: white; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: 0.15s; margin-top: 10px; }
+        .save-btn:hover { background: #06ad56; }
+        .save-btn:active { background: #059048; }
+        .save-btn:disabled { background: #ccc; cursor: not-allowed; }
+        .save-success { text-align: center; color: #52c41a; font-size: 0.9rem; margin-top: 10px; display: none; }
+        .save-success.show { display: block; }
+        .logout-btn { width: 100%; padding: 12px; background: #fff; border: 1px solid #dc2626; color: #dc2626; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: 0.15s; margin-top: 20px; }
+        .logout-btn:hover { background: #fef2f2; }
+        
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: 8px; padding: 30px; max-width: 400px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative; }
+        .modal .close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #999; background: none; border: none; }
+        .modal .profile-name { text-align: center; font-size: 1.4rem; font-weight: 600; color: #1e293b; margin-bottom: 10px; }
+        .modal .profile-name.super-admin { color: #f59e0b; }
+        .modal .profile-name.admin { color: #8b5cf6; }
+        .modal .profile-bio { text-align: center; color: #666; margin: 10px 0; font-size: 0.95rem; }
+        .modal .profile-details { text-align: center; color: #999; font-size: 0.85rem; margin-bottom: 5px; }
+        .modal .profile-status { text-align: center; font-size: 0.85rem; color: #999; margin-bottom: 20px; }
+        .modal .profile-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .modal .profile-actions button { padding: 8px 20px; border: none; border-radius: 4px; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: 0.15s; }
+        .modal .profile-actions .btn-primary { background: #07c160; color: white; }
+        .modal .profile-actions .btn-primary:hover { background: #06ad56; }
+        .modal .profile-actions .btn-secondary { background: #e0e0e0; color: #333; }
+        .modal .profile-actions .btn-secondary:hover { background: #d0d0d0; }
+        .modal .profile-actions .btn-success { background: #52c41a; color: white; }
+        .modal .profile-actions .btn-success:hover { background: #45a818; }
+        .modal .profile-actions .btn-danger { background: #dc2626; color: white; }
+        .modal .profile-actions .btn-danger:hover { background: #b91c1c; }
+        .modal .profile-actions button:disabled { background: #f0f0f0; color: #999; cursor: not-allowed; }
+        
+        .admin-page {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #f5f5f5; z-index: 400; flex-direction: column; overflow: hidden;
+        }
+        .admin-page.active { display: flex; }
+        .admin-header {
+            padding: 15px 20px; background: #ededed; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 10;
+        }
+        .admin-header .back-btn { cursor: pointer; font-size: 1.5rem; padding: 4px 8px; border-radius: 4px; transition: 0.1s; color: #333; background: none; border: none; }
+        .admin-header h2 { font-size: 1.1rem; font-weight: 500; color: #1e293b; flex: 1; }
+        .admin-tabs {
+            display: flex; background: #f7f7f7; border-bottom: 1px solid #e0e0e0; overflow-x: auto; position: sticky; top: 57px; z-index: 9;
+        }
+        .admin-tabs .tab { padding: 10px 20px; cursor: pointer; font-size: 0.9rem; color: #666; white-space: nowrap; transition: 0.15s; border-bottom: 2px solid transparent; }
+        .admin-tabs .tab:hover { background: #e8e8e8; }
+        .admin-tabs .tab.active { color: #07c160; border-bottom-color: #07c160; font-weight: 500; }
+        .admin-content {
+            flex: 1; padding: 20px; width: 100%; overflow-y: auto; max-width: 900px; margin: 0 auto; min-height: 0;
+        }
+        .admin-panel { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .admin-panel h3 { font-size: 1rem; font-weight: 600; color: #1e293b; margin-bottom: 15px; }
+        .admin-panel .btn { padding: 6px 12px; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer; transition: 0.15s; margin: 2px; }
+        .admin-panel .btn-primary { background: #07c160; color: white; }
+        .admin-panel .btn-danger { background: #dc2626; color: white; }
+        .admin-panel .btn-warning { background: #f59e0b; color: white; }
+        .admin-panel .btn-secondary { background: #e0e0e0; color: #333; }
+        .admin-panel table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .admin-panel table th { text-align: left; padding: 8px; background: #f7f7f7; border-bottom: 1px solid #e0e0e0; font-weight: 500; color: #666; }
+        .admin-panel table td { padding: 8px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+        
+        .appeal-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1200; justify-content: center; align-items: center; }
+        .appeal-modal.active { display: flex; }
+        .appeal-modal .modal-content { background: white; border-radius: 8px; padding: 25px; max-width: 400px; width: 90%; position: relative; }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%; min-width: 100%; position: absolute; left: 0; top: 0; bottom: 60px; z-index: 100;
+            }
+            .main-chat {
+                width: 100%; position: absolute; left: 0; top: 0; bottom: 60px; z-index: 90;
+            }
+            .chat-app.show-chat .sidebar { display: none; }
+            .chat-app.show-list .main-chat { display: none; }
+            .chat-header .back-btn { display: block; }
+            .message { max-width: 85%; }
+            .bottom-nav { display: flex; }
+            .chat-app.active { padding-bottom: 0; }
+            .admin-content { padding: 10px; }
+            .emoji-picker {
+                width: 280px;
+                right: 10px;
+                bottom: 70px;
+            }
+            .emoji-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+            .chat-header {
+                padding: 10px 12px;
+                gap: 8px;
+            }
+            .chat-header h2 {
+                font-size: 1rem;
+                min-width: 60px;
+            }
+            .chat-header .header-actions span {
+                font-size: 0.7rem;
+                padding: 2px 4px;
+            }
+            .chat-input-area {
+                padding: 8px 10px;
+                gap: 6px;
+            }
+            .chat-input-area input {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+                min-width: 40px;
+            }
+            .chat-input-area button {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+            .emoji-btn {
+                font-size: 1.3rem !important;
+                padding: 4px 6px !important;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .chat-header .header-actions span {
+                font-size: 0.65rem;
+                padding: 2px 3px;
+            }
+            .chat-input-area button {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+            .chat-input-area input {
+                padding: 6px 8px;
+                font-size: 0.85rem;
+            }
+            .emoji-btn {
+                font-size: 1.1rem !important;
+                padding: 4px 4px !important;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .bottom-nav {
+                display: flex; left: 300px; right: 0;
+            }
+            .chat-app.active { padding-bottom: 60px; }
+            .sidebar { padding-bottom: 60px; }
+            .main-chat { padding-bottom: 60px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 登录页面 -->
+    <div class="auth-container" id="authContainer">
+        <h1>💬 在线聊天</h1>
+        <div class="subtitle" id="authSubtitle">登录你的账号</div>
+        <div class="error-msg" id="authError"></div>
+        <input type="text" id="authUsername" placeholder="用户名">
+        <input type="password" id="authPassword" placeholder="密码">
+        <input type="text" id="authNickname" placeholder="昵称（选填）" style="display:none;">
+        <button id="authBtn">登录</button>
+        <div class="toggle-link">还没有账号？<span id="authToggle">注册</span></div>
+    </div>
+    
+    <!-- 聊天应用 -->
+    <div class="chat-app" id="chatApp">
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info" id="profileBtn">
+                    <div class="user-name" id="myNickname">加载中...</div>
+                    <span class="user-role-badge" id="myRoleBadge" style="display:none;"></span>
+                </div>
+            </div>
+            <div class="chat-list" id="chatList">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+        
+        <div class="main-chat" id="mainChat">
+            <div class="chat-header">
+                <span class="back-btn" id="backBtn">←</span>
+                <h2 id="chatTitle">公共大厅</h2>
+                <div class="header-actions">
+                    <span id="searchToggleBtn">🔍 搜索</span>
+                    <span id="clearChatBtn">🗑️ 清空</span>
+                    <span id="systemChatBtn">📢 系统消息</span>
+                </div>
+            </div>
+            
+            <div class="search-container" id="searchContainer" style="display:none;">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索消息...">
+                <div class="search-results" id="searchResults"></div>
+            </div>
+            
+            <div class="chat-messages" id="messageContainer">
+                <div class="system-message">👋 欢迎来到聊天室</div>
+            </div>
+            <div class="chat-input-area">
+                <button class="emoji-btn" id="emojiBtn">😊</button>
+                <input type="text" id="messageInput" placeholder="输入消息..." maxlength="500">
+                <button id="sendBtn">发送</button>
+                <div class="emoji-picker" id="emojiPicker">
+                    <div class="emoji-picker-header" id="emojiCategories"></div>
+                    <div class="emoji-picker-body" id="emojiBody"></div>
+                    <div class="emoji-page-indicator" id="emojiPageIndicator"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部导航栏 -->
+        <div class="bottom-nav" id="bottomNav">
+            <div class="nav-item active" id="navChat" onclick="switchNav('chat')">
+                <div class="nav-icon">💬</div>
+                <div class="nav-label">聊天</div>
+            </div>
+            <div class="nav-item" id="navAdmin" onclick="switchNav('admin')" style="display:none;">
+                <div class="nav-icon">🛡️</div>
+                <div class="nav-label">管理</div>
+            </div>
+            <div class="nav-item" id="navSettings" onclick="switchNav('settings')">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-label">设置</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 设置页面 -->
+    <div class="settings-page" id="settingsPage">
+        <div class="settings-header">
+            <button class="back-btn" id="settingsBackBtn">←</button>
+            <h2>个人设置</h2>
+        </div>
+        <div class="settings-content">
+            <div class="profile-card">
+                <div class="profile-avatar" id="settingsAvatar">👤</div>
+                <div class="profile-username" id="settingsUsername">用户名</div>
+                <div class="profile-userid" id="settingsUserid">@username</div>
+                <div class="profile-role" id="settingsRole"></div>
+                <div class="form-group"><label>昵称</label><input type="text" id="settingsNickname" placeholder="输入昵称" maxlength="30"></div>
+                <div class="form-group"><label>出生年份</label><input type="number" id="settingsBirthYear" placeholder="例如：1990" min="1900" max="2026"></div>
+                <div class="form-group"><label>国家</label><input type="text" id="settingsCountry" placeholder="例如：中国" maxlength="50"></div>
+                <div class="form-group"><label>所属地</label><input type="text" id="settingsLocation" placeholder="例如：北京" maxlength="50"></div>
+                <div class="form-group"><label>个人简介</label><textarea id="settingsBio" placeholder="介绍一下自己..." maxlength="500"></textarea></div>
+                <button class="save-btn" id="saveProfileBtn">保存资料</button>
+                <div class="save-success" id="saveSuccess">✅ 保存成功！</div>
+                <button class="logout-btn" id="logoutBtn">退出登录</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 管理页面 -->
+    <div class="admin-page" id="adminPage">
+        <div class="admin-header">
+            <button class="back-btn" id="adminBackBtn">←</button>
+            <h2>管理面板</h2>
+        </div>
+        <div class="admin-tabs" id="adminTabs">
+            <div class="tab active" data-tab="users">用户管理</div>
+            <div class="tab" data-tab="messages">消息管理</div>
+            <div class="tab" data-tab="stats">数据统计</div>
+            <div class="tab" data-tab="logs" id="logsTab" style="display:none;">操作日志</div>
+        </div>
+        <div class="admin-content" id="adminContent"></div>
+    </div>
+    
+    <!-- 用户资料弹窗 -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal">
+            <button class="close-btn" id="closeProfileModal">×</button>
+            <div id="profileContent">
+                <div class="profile-name" id="profileName">用户名</div>
+                <div class="profile-details" id="profileDetails"></div>
+                <div class="profile-bio" id="profileBio">这个人很懒，什么都没写</div>
+                <div class="profile-status" id="profileStatus">离线</div>
+                <div class="profile-actions" id="profileActions">
+                    <button class="btn-secondary" id="profileCloseBtn">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 申诉弹窗 -->
+    <div class="appeal-modal" id="appealModal">
+        <div class="modal-content">
+            <h3>提交申诉</h3>
+            <p style="font-size:0.9rem;color:#666;margin-bottom:10px;">请描述你的申诉理由：</p>
+            <textarea id="appealInput" placeholder="输入申诉内容..." maxlength="500"></textarea>
+            <div style="display:flex;gap:10px;margin-top:15px;justify-content:flex-end;">
+                <button class="btn btn-secondary" id="cancelAppealBtn">取消</button>
+                <button class="btn btn-primary" id="submitAppealBtn">提交申诉</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        (function(){
+            "use strict";
+            
+            const authContainer = document.getElementById('authContainer');
+            const chatApp = document.getElementById('chatApp');
+            const authSubtitle = document.getElementById('authSubtitle');
+            const authError = document.getElementById('authError');
+            const authUsername = document.getElementById('authUsername');
+            const authPassword = document.getElementById('authPassword');
+            const authNickname = document.getElementById('authNickname');
+            const authBtn = document.getElementById('authBtn');
+            const authToggle = document.getElementById('authToggle');
+            const chatList = document.getElementById('chatList');
+            const messageContainer = document.getElementById('messageContainer');
+            const messageInput = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const chatTitle = document.getElementById('chatTitle');
+            const backBtn = document.getElementById('backBtn');
+            const myNickname = document.getElementById('myNickname');
+            const myRoleBadge = document.getElementById('myRoleBadge');
+            const profileBtn = document.getElementById('profileBtn');
+            const profileModal = document.getElementById('profileModal');
+            const closeProfileModal = document.getElementById('closeProfileModal');
+            const profileName = document.getElementById('profileName');
+            const profileDetails = document.getElementById('profileDetails');
+            const profileBio = document.getElementById('profileBio');
+            const profileStatus = document.getElementById('profileStatus');
+            const profileActions = document.getElementById('profileActions');
+            const systemChatBtn = document.getElementById('systemChatBtn');
+            
+            const appealModal = document.getElementById('appealModal');
+            const appealInput = document.getElementById('appealInput');
+            const cancelAppealBtn = document.getElementById('cancelAppealBtn');
+            const submitAppealBtn = document.getElementById('submitAppealBtn');
+            
+            const settingsPage = document.getElementById('settingsPage');
+            const settingsBackBtn = document.getElementById('settingsBackBtn');
+            const settingsNickname = document.getElementById('settingsNickname');
+            const settingsBirthYear = document.getElementById('settingsBirthYear');
+            const settingsCountry = document.getElementById('settingsCountry');
+            const settingsLocation = document.getElementById('settingsLocation');
+            const settingsBio = document.getElementById('settingsBio');
+            const saveProfileBtn = document.getElementById('saveProfileBtn');
+            const saveSuccess = document.getElementById('saveSuccess');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const settingsUsername = document.getElementById('settingsUsername');
+            const settingsUserid = document.getElementById('settingsUserid');
+            const settingsRole = document.getElementById('settingsRole');
+            const settingsAvatar = document.getElementById('settingsAvatar');
+            
+            const adminPage = document.getElementById('adminPage');
+            const adminBackBtn = document.getElementById('adminBackBtn');
+            const adminTabs = document.getElementById('adminTabs');
+            const adminContent = document.getElementById('adminContent');
+            const navAdmin = document.getElementById('navAdmin');
+            const logsTab = document.getElementById('logsTab');
+            
+            const emojiBtn = document.getElementById('emojiBtn');
+            const emojiPicker = document.getElementById('emojiPicker');
+            const emojiCategories = document.getElementById('emojiCategories');
+            const emojiBody = document.getElementById('emojiBody');
+            const emojiPageIndicator = document.getElementById('emojiPageIndicator');
+            const searchToggleBtn = document.getElementById('searchToggleBtn');
+            const searchContainer = document.getElementById('searchContainer');
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            const clearChatBtn = document.getElementById('clearChatBtn');
+            
+            let socket = null;
+            let isConnected = false;
+            let currentUser = null;
+            let currentChat = 'public';
+            let currentChatPartner = null;
+            let onlineUsers = [];
+            let friendRequests = [];
+            let unreadCounts = {};
+            let privateMessageHistory = {};
+            let messageHistory = [];
+            const usersData = {};
+            let currentAdminTab = 'users';
+            let adminStats = null;
+            let adminLogs = [];
+            let adminUsersList = [];
+            let adminMessagesList = [];
+            let pendingAppeals = [];
+            let systemMessagesData = [];
+            let searchResultsData = [];
+            let currentEmojiCategory = 'smileys';
+            let currentEmojiPage = 0;
+            let currentMessageElements = [];
+            
+            // Emoji 数据
+            const emojiData = {
+                smileys: {
+                    icon: '😀',
+                    name: '笑脸',
+                    emojis: ['😀','😁','😂','🤣','😃','😄','😅','😆','😉','😊','😋','😎','😍','😘','🥰','😗','😙','😚','☺','🙂','🤗','🤩','🤔','🤨','😐','😑','😶','🙄','😏','😣','😥','😮']
+                },
+                emotions: {
+                    icon: '😌',
+                    name: '情绪',
+                    emojis: ['😌','😛','😜','😝','🤤','😒','😓','😔','😕','🙃','🤑','😲','☹','🙁','😖','😞','😟','😤','😢','😭','😦','😧','😨','😩','🤯','😬','😰','😱','🥵','🥶','😳','🤪']
+                },
+                sick: {
+                    icon: '😷',
+                    name: '状态',
+                    emojis: ['😵','🥴','😠','😡','🤬','😷','🤒','🤕','🤢','🤮','🤧','😇','🥳','🥺','🤠','🤡','🤥','🤫','🤭','🧐','🤓','😈','👿','🤗','🤔','🤨','😐','😑','😶','🙄','😏','😣']
+                },
+                animals: {
+                    icon: '🐶',
+                    name: '动物',
+                    emojis: ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🐤','🦄','🐝','🦋','🐢','🐍','🦖','🐳','🐬','🐊','🦈','🐙','🦑','🦀']
+                },
+                food: {
+                    icon: '🍎',
+                    name: '食物',
+                    emojis: ['🍎','🍐','🍊','🍋','🍌','🍉','🍇','🍓','🍈','🍒','🍑','🥭','🍍','🥥','🥝','🍅','🍆','🥑','🥦','🌽','🥕','🍞','🧀','🍗','🍔','🍟','🍕','🌭','🥪','🍜','🍣','🍦']
+                },
+                activities: {
+                    icon: '⚽',
+                    name: '活动',
+                    emojis: ['⚽','🏀','🏈','⚾','🎾','🏐','🏉','🎱','🏓','🏸','🥅','🏒','🏑','🥍','🏏','⛳','🏹','🎣','🥊','🥋','🎽','🛹','🛼','🛷','⛸','🥌','🎿','⛷','🏂','🏋️','🤼','🤸']
+                },
+                travel: {
+                    icon: '🚗',
+                    name: '交通',
+                    emojis: ['🚗','🚕','🚙','🚌','🚎','🏎️','🚓','🚑','🚒','🚐','🚚','🚛','🚜','🛴','🚲','🛵','🏍️','🚨','🚔','🚍','🚘','🚖','🚡','🚠','🚟','🚃','🚋','🚞','🚝','🚄','🚅','🚈']
+                },
+                symbols: {
+                    icon: '❤️',
+                    name: '符号',
+                    emojis: ['❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝','💟','☮️','✝️','☪️','🕉️','☸️','✡️','🔯','🕎','☯️','☦️','🛐','⛎','♈']
+                }
+            };
+            
+            function handleMobileView() {
+                if (window.innerWidth <= 768) {
+                    if (currentChat === 'public' || currentChat === 'private') {
+                        chatApp.classList.add('show-chat');
+                        chatApp.classList.remove('show-list');
+                    }
+                }
+            }
+            
+            window.switchNav = function(tab) {
+                const navChat = document.getElementById('navChat');
+                const navSettings = document.getElementById('navSettings');
+                const navAdminEl = document.getElementById('navAdmin');
+                if (tab === 'chat') {
+                    navChat.classList.add('active');
+                    navSettings.classList.remove('active');
+                    navAdminEl.classList.remove('active');
+                    settingsPage.classList.remove('active');
+                    adminPage.classList.remove('active');
+                    chatApp.classList.add('active');
+                    handleMobileView();
+                } else if (tab === 'settings') {
+                    navChat.classList.remove('active');
+                    navSettings.classList.add('active');
+                    navAdminEl.classList.remove('active');
+                    chatApp.classList.remove('active');
+                    adminPage.classList.remove('active');
+                    settingsPage.classList.add('active');
+                    loadSettingsData();
+                } else if (tab === 'admin') {
+                    navChat.classList.remove('active');
+                    navSettings.classList.remove('active');
+                    navAdminEl.classList.add('active');
+                    chatApp.classList.remove('active');
+                    settingsPage.classList.remove('active');
+                    adminPage.classList.add('active');
+                    loadAdminData();
+                }
+            };
+            
+            function loadSettingsData() {
+                if (!currentUser) return;
+                settingsUsername.textContent = currentUser.nickname || currentUser.username;
+                settingsUserid.textContent = '@' + currentUser.username;
+                settingsNickname.value = currentUser.nickname || '';
+                settingsBirthYear.value = currentUser.birthYear || '';
+                settingsCountry.value = currentUser.country || '';
+                settingsLocation.value = currentUser.location || '';
+                settingsBio.value = currentUser.bio || '';
+                if (currentUser.role === 'super_admin') {
+                    settingsRole.textContent = '👑 超级管理员'; settingsRole.className = 'profile-role super-admin';
+                    settingsAvatar.className = 'profile-avatar super-admin'; settingsUsername.className = 'profile-username super-admin';
+                } else if (currentUser.role === 'admin') {
+                    settingsRole.textContent = '🛡️ 管理员'; settingsRole.className = 'profile-role admin';
+                    settingsAvatar.className = 'profile-avatar admin'; settingsUsername.className = 'profile-username admin';
+                } else {
+                    settingsRole.textContent = '👤 普通用户'; settingsRole.className = 'profile-role';
+                    settingsAvatar.className = 'profile-avatar'; settingsUsername.className = 'profile-username';
+                }
+                settingsAvatar.textContent = (currentUser.nickname || currentUser.username).charAt(0).toUpperCase();
+            }
+            
+            async function saveProfile() {
+                if (!currentUser) return;
+                const updatedData = {
+                    nickname: settingsNickname.value.trim() || currentUser.nickname,
+                    birthYear: settingsBirthYear.value ? parseInt(settingsBirthYear.value) : null,
+                    country: settingsCountry.value.trim(),
+                    location: settingsLocation.value.trim(),
+                    bio: settingsBio.value.trim()
+                };
+                saveProfileBtn.disabled = true; saveProfileBtn.textContent = '保存中...';
+                try {
+                    const resp = await fetch('/api/profile/update', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: currentUser.username, ...updatedData }) });
+                    const data = await resp.json();
+                    if (data.success) {
+                        currentUser = { ...currentUser, ...updatedData };
+                        myNickname.textContent = currentUser.nickname;
+                        saveSuccess.classList.add('show');
+                        setTimeout(()=> saveSuccess.classList.remove('show'), 3000);
+                        if (socket && socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type:'profile_update', ...updatedData }));
+                        renderChatList();
+                    } else alert(data.message || '保存失败');
+                } catch(e) { console.error(e); alert('网络错误'); }
+                saveProfileBtn.disabled = false; saveProfileBtn.textContent = '保存资料';
+            }
+            
+            function logout() {
+                if (confirm('确定要退出登录吗？')) {
+                    if (socket) socket.close(1000, '用户退出');
+                    currentUser = null; isConnected = false; messageHistory = []; privateMessageHistory = {}; unreadCounts = {}; systemMessagesData = [];
+                    settingsPage.classList.remove('active'); adminPage.classList.remove('active'); chatApp.classList.remove('active');
+                    authContainer.style.display = 'block';
+                    document.getElementById('navChat').classList.add('active'); document.getElementById('navSettings').classList.remove('active'); document.getElementById('navAdmin').classList.remove('active');
+                    authPassword.value = '';
+                }
+            }
+            
+            let isLoginMode = true;
+            authToggle.addEventListener('click', function(){
+                isLoginMode = !isLoginMode;
+                if(isLoginMode){ authSubtitle.textContent='登录你的账号'; authBtn.textContent='登录'; authToggle.textContent='注册'; authNickname.style.display='none'; }
+                else { authSubtitle.textContent='创建新账号'; authBtn.textContent='注册'; authToggle.textContent='登录'; authNickname.style.display='block'; }
+                authError.textContent = '';
+            });
+            
+            async function handleAuth(){
+                const username = authUsername.value.trim(); const password = authPassword.value.trim(); const nickname = authNickname.value.trim();
+                if(!username || !password){ authError.textContent='请填写用户名和密码'; return; }
+                if(!isLoginMode && !nickname){ authError.textContent='请填写昵称'; return; }
+                authError.textContent = '';
+                const endpoint = isLoginMode ? '/api/login' : '/api/register';
+                const body = isLoginMode ? { username, password } : { username, password, nickname };
+                try{
+                    const resp = await fetch(endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+                    const data = await resp.json();
+                    if(data.success){
+                        if(isLoginMode){
+                            currentUser = data.user; currentUser.username = username;
+                            authContainer.style.display = 'none'; chatApp.classList.add('active');
+                            document.getElementById('navChat').classList.add('active'); document.getElementById('navSettings').classList.remove('active'); settingsPage.classList.remove('active');
+                            if (currentUser.role === 'super_admin' || currentUser.role === 'admin') { navAdmin.style.display = 'block'; if (currentUser.role === 'super_admin') logsTab.style.display='block'; }
+                            else { navAdmin.style.display='none'; logsTab.style.display='none'; }
+                            initChat();
+                        } else {
+                            authError.textContent = '✅ 注册成功，请登录'; authError.style.color='#52c41a'; isLoginMode=true;
+                            authSubtitle.textContent='登录你的账号'; authBtn.textContent='登录'; authToggle.textContent='注册'; authNickname.style.display='none'; authPassword.value='';
+                            setTimeout(()=>{ authError.style.color='#dc2626'; authError.textContent=''; }, 3000);
+                        }
+                    } else {
+                        if(data.banned) {
+                            authError.innerHTML = `⛔ 你已被封禁！<br>原因：${data.banReason || '未知原因'}<br>封禁至：${data.banUntil ? new Date(data.banUntil).toLocaleString() : '永久'}`;
+                            authError.style.color = '#dc2626';
+                            
+                            const appealBtn = document.createElement('button');
+                            appealBtn.className = 'appeal-btn';
+                            appealBtn.textContent = '提交申诉';
+                            appealBtn.addEventListener('click', function() {
+                                appealModal.classList.add('active');
+                                appealModal.dataset.username = username;
+                            });
+                            authError.appendChild(appealBtn);
+                        } else {
+                            authError.textContent = data.message || '操作失败';
+                        }
+                    }
+                }catch(e){ authError.textContent='网络错误'; }
+            }
+            authBtn.addEventListener('click', handleAuth);
+            authPassword.addEventListener('keypress', (e)=>{ if(e.key==='Enter') handleAuth(); });
+            authNickname.addEventListener('keypress', (e)=>{ if(e.key==='Enter') handleAuth(); });
+            
+            submitAppealBtn.addEventListener('click', async function() {
+                const appealText = appealInput.value.trim(); const username = appealModal.dataset.username;
+                if(!appealText || !username) return;
+                try { 
+                    const resp = await fetch('/api/appeal', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username, text: appealText }) }); 
+                    const data = await resp.json(); 
+                    if(data.success) { 
+                        alert('申诉已提交，请等待管理员处理'); 
+                        appealModal.classList.remove('active'); 
+                        appealInput.value='';
+                        authError.innerHTML = '申诉已提交，请等待管理员处理';
+                        authError.style.color = '#52c41a';
+                    } else alert(data.message || '提交失败'); 
+                } catch(e) { alert('网络错误'); }
+            });
+            cancelAppealBtn.addEventListener('click', ()=>{ appealModal.classList.remove('active'); appealInput.value=''; });
+            
+            function initChat(){
+                myNickname.textContent = currentUser.nickname; updateRoleBadge(); renderChatList(); connectWebSocket(); setupEventListeners(); handleMobileView(); initEmojiPicker();
+            }
+            
+            function updateRoleBadge() {
+                if (currentUser.role === 'super_admin') { myRoleBadge.textContent='超级管理员'; myRoleBadge.className='user-role-badge super-admin'; myRoleBadge.style.display='inline-block'; }
+                else if (currentUser.role === 'admin') { myRoleBadge.textContent='管理员'; myRoleBadge.className='user-role-badge admin'; myRoleBadge.style.display='inline-block'; }
+                else myRoleBadge.style.display='none';
+            }
+            
+            function addSystemNotificationToChat(content, actions) {
+                const notificationDiv = document.createElement('div');
+                notificationDiv.className = 'system-notification';
+                const contentDiv = document.createElement('div'); contentDiv.className = 'notification-content'; contentDiv.textContent = content;
+                notificationDiv.appendChild(contentDiv);
+                if (actions && actions.length) {
+                    const actionsDiv = document.createElement('div'); actionsDiv.className = 'notification-actions';
+                    actions.forEach(action => {
+                        const btn = document.createElement('button'); btn.textContent = action.label; btn.className = action.className || 'btn-accept';
+                        btn.addEventListener('click', action.onClick); actionsDiv.appendChild(btn);
+                    });
+                    notificationDiv.appendChild(actionsDiv);
+                }
+                messageContainer.appendChild(notificationDiv);
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            }
+            
+            function renderChatList(){
+                chatList.innerHTML = '';
+                const publicItem = document.createElement('div');
+                publicItem.className = 'chat-item' + (currentChat === 'public' ? ' active' : '');
+                publicItem.innerHTML = `<div class="chat-icon">🏠</div><div class="chat-info"><div class="chat-name">公共大厅</div><div class="chat-preview">${messageHistory.length > 0 ? messageHistory[messageHistory.length-1].text : '暂无消息'}</div></div>`;
+                publicItem.addEventListener('click', ()=> switchToPublicChat());
+                chatList.appendChild(publicItem);
+                
+                if(currentUser && currentUser.friends){
+                    currentUser.friends.forEach(friend => {
+                        const friendData = usersData[friend] || {};
+                        const friendItem = document.createElement('div');
+                        friendItem.className = 'chat-item' + (currentChat === 'private' && currentChatPartner === friend ? ' active' : '');
+                        const unreadCount = unreadCounts[friend] || 0;
+                        const lastMessage = privateMessageHistory[friend]?.length ? privateMessageHistory[friend][privateMessageHistory[friend].length-1].text : '开始聊天';
+                        friendItem.innerHTML = `<div class="chat-icon">💬</div><div class="chat-info"><div class="chat-name">${friendData.nickname || friend}</div><div class="chat-preview">${lastMessage}</div></div>${unreadCount > 0 ? `<span class="chat-badge show">${unreadCount}</span>` : ''}<button class="remove-friend-btn" data-username="${friend}">取消好友</button>`;
+                        
+                        friendItem.addEventListener('click', (e)=> {
+                            if (e.target.classList.contains('remove-friend-btn')) return;
+                            switchToPrivateChat(friend);
+                        });
+                        
+                        const removeBtn = friendItem.querySelector('.remove-friend-btn');
+                        removeBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            removeFriend(friend);
+                        });
+                        
+                        chatList.appendChild(friendItem);
+                    });
+                }
+                
+                const systemItem = document.createElement('div');
+                systemItem.className = 'chat-item';
+                systemItem.style.cursor = 'pointer';
+                systemItem.innerHTML = `<div class="chat-icon">📢</div><div class="chat-info"><div class="chat-name">系统消息</div><div class="chat-preview"> </div></div><span class="system-badge" id="systemListBadge">●</span>`;
+                systemItem.addEventListener('click', ()=> showSystemChat());
+                chatList.appendChild(systemItem);
+                updateSystemBadge();
+            }
+            
+            function updateSystemBadge() {
+                const badge = document.getElementById('systemListBadge');
+                if (badge) {
+                    if (systemMessagesData.some(m => m.pending)) badge.classList.add('show');
+                    else badge.classList.remove('show');
+                }
+            }
+            
+            function showSystemChat() {
+                currentChat = 'system';
+                currentChatPartner = null;
+                chatTitle.textContent = '📢 系统消息';
+                messageContainer.innerHTML = '';
+                if (systemMessagesData.length === 0) {
+                    messageContainer.innerHTML = '<div class="system-message">暂无系统通知</div>';
+                } else {
+                    systemMessagesData.forEach(msg => {
+                        addSystemNotificationToChat(msg.content, msg.actions);
+                    });
+                }
+                renderChatList();
+                if (window.innerWidth <= 768) { chatApp.classList.add('show-chat'); chatApp.classList.remove('show-list'); }
+            }
+            
+            function switchToPublicChat(){
+                currentChat = 'public'; currentChatPartner = null; chatTitle.textContent = '公共大厅';
+                messageContainer.innerHTML = '';
+                currentMessageElements = [];
+                if(messageHistory.length > 0){ messageHistory.forEach(msg => addMessageToUI(msg)); }
+                else messageContainer.innerHTML = '<div class="system-message">👋 欢迎来到聊天室</div>';
+                renderChatList(); handleMobileView();
+            }
+            
+            function switchToPrivateChat(friend){
+                currentChat = 'private'; currentChatPartner = friend; chatTitle.textContent = (usersData[friend]?.nickname) || friend;
+                unreadCounts[friend] = 0;
+                messageContainer.innerHTML = '';
+                currentMessageElements = [];
+                const msgs = privateMessageHistory[friend] || [];
+                if(msgs.length > 0){ msgs.forEach(msg => addMessageToUI(msg)); }
+                else messageContainer.innerHTML = '<div class="system-message">开始聊天吧</div>';
+                renderChatList(); handleMobileView();
+            }
+            
+            function getWebSocketUrl() {
+                const host = window.location.host;
+                // 如果是本地开发环境（localhost 或 127.0.0.1），使用 ws://
+                if (host.includes('localhost') || host.includes('127.0.0.1')) {
+                    return `ws://${host}/ws`;
+                }
+                // 如果部署到 Zeabur（域名包含 zeabur.app），使用 wss://
+                if (host.includes('zeabur.app')) {
+                    return `wss://${host}/ws`;
+                }
+                // 其他情况：如果当前页面是 https，则使用 wss://，否则使用 ws://
+                if (window.location.protocol === 'https:') {
+                    return `wss://${host}/ws`;
+                }
+                return `ws://${host}/ws`;
+            }
+            
+            function connectWebSocket(){
+                const wsUrl = getWebSocketUrl();
+                console.log('WebSocket 连接地址:', wsUrl);
+                try{
+                    socket = new WebSocket(wsUrl);
+                    socket.onopen = function(){ console.log('WebSocket 连接成功'); isConnected = true; socket.send(JSON.stringify({ type:'login', username: currentUser.username })); };
+                    socket.onmessage = function(event){
+                        try{
+                            const data = JSON.parse(event.data);
+                            switch(data.type){
+                                case 'user_info': currentUser = { ...currentUser, ...data.user }; myNickname.textContent = currentUser.nickname; updateRoleBadge(); renderChatList(); break;
+                                case 'history':
+                                    if(data.messages){ messageHistory = data.messages; if(currentChat==='public'){ messageContainer.innerHTML=''; currentMessageElements=[]; messageHistory.forEach(msg=>addMessageToUI(msg)); if(messageHistory.length===0) messageContainer.innerHTML='<div class="system-message">👋 欢迎来到聊天室</div>'; } renderChatList(); }
+                                    break;
+                                case 'private_history':
+                                    if(data.messages){ data.messages.forEach(msg=>{ const partner = msg.from===currentUser.username ? msg.to : msg.from; if(!privateMessageHistory[partner]) privateMessageHistory[partner]=[]; privateMessageHistory[partner].push(msg); }); if(currentChat==='private'&&currentChatPartner) switchToPrivateChat(currentChatPartner); renderChatList(); }
+                                    break;
+                                case 'message': if(data.message){ messageHistory.push(data.message); if(currentChat==='public') addMessageToUI(data.message); renderChatList(); } break;
+                                case 'message_deleted': messageHistory = messageHistory.filter(m=>m.id!==data.messageId); Object.keys(privateMessageHistory).forEach(k=> privateMessageHistory[k] = privateMessageHistory[k].filter(m=>m.id!==data.messageId)); if(currentChat==='public') switchToPublicChat(); else if(currentChat==='private') switchToPrivateChat(currentChatPartner); renderChatList(); break;
+                                case 'message_recalled': const recall = (m)=>{ if(m.id===data.messageId){ m.text='[消息已被撤回]'; m.recalled=true; } }; messageHistory.forEach(recall); Object.values(privateMessageHistory).forEach(msgs=>msgs.forEach(recall)); if(currentChat==='public') switchToPublicChat(); else if(currentChat==='private') switchToPrivateChat(currentChatPartner); renderChatList(); break;
+                                case 'private_message': if(data.message){ const msg=data.message; const partner=msg.from===currentUser.username?msg.to:msg.from; if(!privateMessageHistory[partner]) privateMessageHistory[partner]=[]; privateMessageHistory[partner].push(msg); if(currentChat==='private'&&currentChatPartner===partner) addMessageToUI(msg); else unreadCounts[partner]=(unreadCounts[partner]||0)+1; renderChatList(); } break;
+                                case 'online_users': onlineUsers=data.users||[]; break;
+                                case 'friend_requests':
+                                    friendRequests = data.requests||[];
+                                    friendRequests.forEach(req => {
+                                        const existing = systemMessagesData.find(m=>m.key==='friend_'+req.from);
+                                        if(!existing) {
+                                            systemMessagesData.push({ key:'friend_'+req.from, pending:true, content:`用户 ${req.nickname||req.from} (@${req.from}) 申请加你为好友`, actions:[
+                                                { label:'同意', className:'btn-accept', onClick: ()=> { handleFriendRequest(req.from, true); removeSystemMessage('friend_'+req.from); } },
+                                                { label:'拒绝', className:'btn-reject', onClick: ()=> { handleFriendRequest(req.from, false); removeSystemMessage('friend_'+req.from); } }
+                                            ]});
+                                        }
+                                    });
+                                    updateSystemBadge();
+                                    renderChatList();
+                                    break;
+                                case 'friend_request':
+                                    if(data.from) {
+                                        const key = 'friend_'+data.from;
+                                        if(!systemMessagesData.find(m=>m.key===key)) {
+                                            systemMessagesData.push({ key, pending:true, content:`用户 ${data.fromUser?.nickname || data.from} (@${data.from}) 请求加你为好友`, actions:[
+                                                { label:'同意', className:'btn-accept', onClick:()=>{ handleFriendRequest(data.from, true); removeSystemMessage(key); } },
+                                                { label:'拒绝', className:'btn-reject', onClick:()=>{ handleFriendRequest(data.from, false); removeSystemMessage(key); } }
+                                            ]});
+                                            updateSystemBadge();
+                                        }
+                                    }
+                                    break;
+                                case 'friend_request_handled':
+                                    friendRequests = friendRequests.filter(r=>r.from!==data.from);
+                                    if(data.accepted) { if(!currentUser.friends.includes(data.from)) currentUser.friends.push(data.from); }
+                                    renderChatList(); break;
+                                case 'friend_removed':
+                                    if(currentUser.friends.includes(data.friend)) {
+                                        currentUser.friends = currentUser.friends.filter(f=>f!==data.friend);
+                                    }
+                                    renderChatList();
+                                    if(currentChat === 'private' && currentChatPartner === data.friend) {
+                                        messageContainer.innerHTML = '<div class="system-message">你们已不是好友</div>';
+                                    }
+                                    break;
+                                case 'user_updated': if(data.user){ usersData[data.user.username]=data.user; if(data.user.username===currentUser.username){ currentUser={...currentUser,...data.user}; myNickname.textContent=currentUser.nickname; updateRoleBadge(); } renderChatList(); } break;
+                                case 'system': if(data.text) addSystemMessage(data.text); break;
+                                case 'appeal_notification':
+                                    if(currentUser.role==='super_admin'||currentUser.role==='admin') {
+                                        const key = 'appeal_'+data.appealId;
+                                        if(!systemMessagesData.find(m=>m.key===key)) {
+                                            systemMessagesData.push({ key, pending:true, content:`📨 申诉通知\n用户: ${data.username}\n理由: ${data.text}`, actions:[
+                                                { label:'接受申诉', className:'btn-accept', onClick:()=>{ handleAppeal(data.appealId,'accepted'); removeSystemMessage(key); } },
+                                                { label:'拒绝申诉', className:'btn-reject', onClick:()=>{ handleAppeal(data.appealId,'rejected'); removeSystemMessage(key); } }
+                                            ]});
+                                            updateSystemBadge();
+                                        }
+                                    }
+                                    break;
+                                case 'appeal_result': if(data.decision==='accepted') addSystemMessage('✅ 你的申诉已被接受'); else addSystemMessage('❌ 你的申诉被拒绝'); break;
+                                case 'muted_notification': addSystemMessage(`🔇 你已被禁言！原因: ${data.reason||'违反规定'}`); break;
+                                case 'unmuted_notification': addSystemMessage('✅ 你已被解除禁言'); break;
+                                case 'admin_data':
+                                    if(data.dataType==='users'){ adminUsersList=data.users||[]; if(currentAdminTab==='users') renderAdminUsers(); }
+                                    else if(data.dataType==='stats'){ adminStats=data.stats; if(currentAdminTab==='stats') renderAdminStats(); }
+                                    else if(data.dataType==='messages'){ adminMessagesList=data.messages||[]; if(currentAdminTab==='messages') renderAdminMessages(); }
+                                    else if(data.dataType==='logs'){ adminLogs=data.logs||[]; if(currentAdminTab==='logs') renderAdminLogs(); }
+                                    else if(data.dataType==='error') alert(data.message||'操作失败');
+                                    break;
+                            }
+                        }catch(err){ console.warn('解析消息失败:', err); }
+                    };
+                    socket.onclose = function(){ isConnected=false; if(currentUser){ addSystemMessage('⚠️ 连接断开，重连中...'); setTimeout(()=>{ if(!isConnected&&currentUser) connectWebSocket(); }, 3000); } };
+                    socket.onerror = function(){ isConnected=false; };
+                }catch(e){ console.error(e); setTimeout(()=>{ if(!isConnected&&currentUser) connectWebSocket(); }, 4000); }
+            }
+            
+            function removeSystemMessage(key) {
+                systemMessagesData = systemMessagesData.filter(m=>m.key!==key);
+                updateSystemBadge();
+                if(currentChat==='system') showSystemChat();
+            }
+            
+            function handleAppeal(appealId, decision) {
+                if(socket && socket.readyState===WebSocket.OPEN) socket.send(JSON.stringify({ type:'handle_appeal', appealId, decision }));
+            }
+            
+            function addMessageToUI(msg){
+                const messageDiv = document.createElement('div'); messageDiv.className='message';
+                const isSelf = (msg.username===currentUser.username || msg.from===currentUser.username);
+                if(isSelf) messageDiv.classList.add('self');
+                const senderName = document.createElement('div'); senderName.className='sender-name'; senderName.textContent = msg.nickname || msg.fromNickname || msg.username || '匿名';
+                senderName.addEventListener('click', ()=> showUserProfile(msg.username || msg.from));
+                messageDiv.appendChild(senderName);
+                const contentDiv = document.createElement('div'); contentDiv.className='message-content'; contentDiv.textContent = msg.text || '';
+                if(msg.recalled){ contentDiv.style.fontStyle='italic'; contentDiv.style.color='#999'; }
+                messageDiv.appendChild(contentDiv);
+                const timeDiv = document.createElement('div'); timeDiv.className='message-time'; const time = msg.time ? new Date(msg.time) : new Date();
+                timeDiv.textContent = time.getHours().toString().padStart(2,'0')+':'+time.getMinutes().toString().padStart(2,'0');
+                messageDiv.appendChild(timeDiv);
+                messageDiv.dataset.messageId = msg.id;
+                messageContainer.appendChild(messageDiv);
+                currentMessageElements.push({id: msg.id, element: messageDiv, text: msg.text || '', time: msg.time});
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            }
+            
+            function addSystemMessage(text){
+                const div = document.createElement('div'); div.className='system-message'; div.textContent=text;
+                messageContainer.appendChild(div); messageContainer.scrollTop = messageContainer.scrollHeight;
+            }
+            
+            function sendMessage(){
+                const text = messageInput.value.trim(); if(!text) return;
+                if(!socket || socket.readyState!==WebSocket.OPEN){ alert('未连接'); return; }
+                const messageData = { type: currentChat==='public'?'message':'private_message', text, time:new Date().toISOString() };
+                if(currentChat==='private') messageData.to=currentChatPartner;
+                socket.send(JSON.stringify(messageData)); messageInput.value=''; messageInput.focus();
+            }
+            
+            async function showUserProfile(username){
+                if(username===currentUser.username){
+                    profileName.textContent=currentUser.nickname; profileName.className = currentUser.role==='super_admin'?'profile-name super-admin':currentUser.role==='admin'?'profile-name admin':'profile-name';
+                    const age=currentUser.birthYear?`${new Date().getFullYear()-currentUser.birthYear}岁`:''; const location=currentUser.location?`📍 ${currentUser.location}`:''; const country=currentUser.country?`🌍 ${currentUser.country}`:'';
+                    profileDetails.textContent=[age,country,location].filter(Boolean).join(' · '); profileBio.textContent=currentUser.bio||'这个人很懒'; profileStatus.textContent='🟢 在线'; profileActions.innerHTML='<button class="btn-secondary" id="profileCloseBtn2">关闭</button>'; document.getElementById('profileCloseBtn2').addEventListener('click',()=>profileModal.classList.remove('active')); profileModal.classList.add('active'); return;
+                }
+                try{
+                    const resp=await fetch(`/api/user?username=${encodeURIComponent(username)}`); const data=await resp.json();
+                    if(data.success){ const user=data.user; usersData[username]=user; profileName.textContent=user.nickname; profileName.className=user.role==='super_admin'?'profile-name super-admin':user.role==='admin'?'profile-name admin':'profile-name'; const age=user.birthYear?`${new Date().getFullYear()-user.birthYear}岁`:''; profileDetails.textContent=[age,user.country,user.location].filter(Boolean).join(' · '); profileBio.textContent=user.bio||'这个人很懒'; profileStatus.textContent=user.online?'🟢 在线':'⚪ 离线'; let actionsHTML='<button class="btn-secondary" id="profileCloseBtn2">关闭</button>'; const isFriend=currentUser.friends?.includes(username); if(isFriend) actionsHTML+='<button class="btn-danger" id="removeFriendBtn2">取消好友</button>'; else actionsHTML+='<button class="btn-primary" id="addFriendBtn">添加好友</button>'; profileActions.innerHTML=actionsHTML; document.getElementById('profileCloseBtn2')?.addEventListener('click',()=>profileModal.classList.remove('active')); const addBtn=document.getElementById('addFriendBtn'); if(addBtn) addBtn.addEventListener('click',()=>sendFriendRequest(username)); const removeBtn=document.getElementById('removeFriendBtn2'); if(removeBtn) removeBtn.addEventListener('click',()=>{ removeFriend(username); profileModal.classList.remove('active'); }); profileModal.classList.add('active'); }
+                }catch(e){}
+            }
+            
+            async function sendFriendRequest(to){ try{ const resp=await fetch('/api/friend/request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({from:currentUser.username,to})}); const data=await resp.json(); if(data.success){alert('好友请求已发送'); profileModal.classList.remove('active');} else alert(data.message||'发送失败'); }catch(e){} }
+            async function handleFriendRequest(from, accept){ try{ const resp=await fetch('/api/friend/response',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:currentUser.username,from,accept})}); const data=await resp.json(); if(data.success){ friendRequests=friendRequests.filter(r=>r.from!==from); if(accept && !currentUser.friends.includes(from)) currentUser.friends.push(from); renderChatList(); } }catch(e){} }
+            
+            async function removeFriend(friend) {
+                if (!confirm(`确定要取消与 ${usersData[friend]?.nickname || friend} 的好友关系吗？`)) return;
+                try {
+                    const resp = await fetch('/api/friend/remove', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ username: currentUser.username, friend })
+                    });
+                    const data = await resp.json();
+                    if (data.success) {
+                        if (currentUser.friends.includes(friend)) {
+                            currentUser.friends = currentUser.friends.filter(f => f !== friend);
+                        }
+                        renderChatList();
+                        if (currentChat === 'private' && currentChatPartner === friend) {
+                            messageContainer.innerHTML = '<div class="system-message">你们已不是好友</div>';
+                        }
+                    } else {
+                        alert(data.message || '操作失败');
+                    }
+                } catch(e) {
+                    alert('网络错误');
+                }
+            }
+            
+            function loadAdminData(){ if(!currentUser||(currentUser.role!=='super_admin'&&currentUser.role!=='admin')) return; if(socket&&socket.readyState===WebSocket.OPEN){ socket.send(JSON.stringify({type:'admin_get_users'})); socket.send(JSON.stringify({type:'admin_get_stats'})); socket.send(JSON.stringify({type:'admin_get_messages'})); if(currentUser.role==='super_admin') socket.send(JSON.stringify({type:'admin_get_logs'})); } else alert('连接断开'); renderAdminUsers(); }
+            
+            function renderAdminUsers(){ if(currentAdminTab!=='users') return; let html=`<div class="admin-panel"><h3>用户管理</h3><input type="text" id="adminSearchUser" placeholder="搜索用户..." style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;margin-bottom:10px;"><div style="overflow-x:auto;"><table><thead><tr><th>用户名</th><th>昵称</th><th>角色</th><th>状态</th><th>操作</th></tr></thead><tbody>${adminUsersList.map(user=>`<tr><td>${user.username}</td><td>${user.nickname}</td><td>${user.role==='super_admin'?'👑超级管理员':user.role==='admin'?'🛡️管理员':'👤用户'}</td><td>${user.banned?'⛔封禁':user.muted?'🔇禁言':user.online?'🟢在线':'⚪离线'}</td><td>${currentUser.role==='super_admin'&&user.role!=='super_admin'?`<button class="btn btn-warning" onclick="toggleAdminRole('${user.username}','${user.role}')">${user.role==='admin'?'取消管理员':'设为管理员'}</button>`:''}${user.role!=='super_admin'?`<button class="btn ${user.muted?'btn-primary':'btn-warning'}" onclick="${user.muted?`unmuteUser('${user.username}')`:`muteUser('${user.username}')`}">${user.muted?'解禁':'禁言'}</button><button class="btn ${user.banned?'btn-primary':'btn-danger'}" onclick="toggleBanUser('${user.username}',${user.banned})">${user.banned?'解封':'封禁'}</button><button class="btn btn-danger" onclick="deleteUser('${user.username}')">删除</button><button class="btn btn-secondary" onclick="resetPassword('${user.username}')">重置密码</button>`:''}</td></tr>`).join('')}</tbody></table></div></div>`; adminContent.innerHTML=html; const searchInput=document.getElementById('adminSearchUser'); if(searchInput) searchInput.addEventListener('input',function(){const term=this.value.toLowerCase(); document.querySelectorAll('#adminContent tbody tr').forEach(row=>row.style.display=row.textContent.toLowerCase().includes(term)?'':'none');}); }
+            
+            function renderAdminMessages(){ if(currentAdminTab!=='messages') return; let html=`<div class="admin-panel"><h3>消息管理</h3><p style="color:#666;font-size:0.85rem;margin-bottom:10px;">共 ${adminMessagesList.length} 条消息</p><div style="max-height:60vh;overflow-y:auto;border:1px solid #eee;border-radius:4px;">${adminMessagesList.map(msg=>`<div style="padding:10px;border-bottom:1px solid #f0f0f0;"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:5px;"><strong>${msg.nickname||msg.fromNickname}</strong> <span style="color:#999;font-size:0.8rem;">${new Date(msg.time).toLocaleString()}</span></div><div style="margin:6px 0;font-size:0.9rem;">${msg.text}</div><div style="font-size:0.75rem;color:#888;margin-bottom:5px;">📍 发表于 ${msg.scope==='public'?'公共大厅':(msg.scope==='private'?`私聊 ${msg.toNickname||msg.to||''}`:'未知')}</div><div><button class="btn btn-danger" onclick="deleteMessage('${msg.id}')">删除</button> <button class="btn btn-warning" onclick="recallMessage('${msg.id}')">撤回</button></div></div>`).join('') || '<p style="padding:15px;">暂无消息</p>'}</div></div>`; adminContent.innerHTML=html; }
+            
+            function renderAdminStats(){ if(currentAdminTab!=='stats') return; if(!adminStats){ adminContent.innerHTML='<div class="admin-panel"><h3>数据统计</h3><p>加载中...</p></div>'; return; } let html=`<div class="admin-panel"><h3>数据统计</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;"><div style="background:#f8fafc;padding:15px;text-align:center;border-radius:6px;"><div style="font-size:1.5rem;font-weight:600;">${adminStats.onlineUsers}</div><div style="font-size:0.8rem;color:#999;">在线用户</div></div><div style="background:#f8fafc;padding:15px;text-align:center;border-radius:6px;"><div style="font-size:1.5rem;font-weight:600;">${adminStats.totalUsers}</div><div style="font-size:0.8rem;color:#999;">注册用户</div></div><div style="background:#f8fafc;padding:15px;text-align:center;border-radius:6px;"><div style="font-size:1.5rem;font-weight:600;">${adminStats.totalMessages}</div><div style="font-size:0.8rem;color:#999;">总消息</div></div></div></div>`; adminContent.innerHTML=html; }
+            
+            function renderAdminLogs(){ if(currentAdminTab!=='logs') return; let html=`<div class="admin-panel"><h3>操作日志</h3><div style="max-height:60vh;overflow-y:auto;">${adminLogs.map(log=>`<div style="padding:8px;border-bottom:1px solid #f0f0f0;"><strong>${log.admin}</strong> ${log.action} ${log.details?'- '+log.details:''}<span style="color:#999;font-size:0.75rem;margin-left:8px;">${new Date(log.time).toLocaleString()}</span></div>`).join('')||'<p>暂无日志</p>'}</div></div>`; adminContent.innerHTML=html; }
+            
+            window.viewUserDetail=function(username){const user=adminUsersList.find(u=>u.username===username); if(user) alert(`用户名:${user.username}\n昵称:${user.nickname}\n角色:${user.role}\n注册:${user.registeredAt?new Date(user.registeredAt).toLocaleString():'未知'}`);};
+            window.toggleAdminRole=function(username,currentRole){ if(currentUser.role!=='super_admin')return; socket?.send(JSON.stringify({type:currentRole==='admin'?'remove_admin':'make_admin',username})); setTimeout(loadAdminData,500); };
+            window.toggleBanUser=function(username,isBanned){ if(isBanned){ socket?.send(JSON.stringify({type:'unban_user',username})); } else { const reason=prompt('封禁原因:'); if(reason===null)return; const duration=prompt('时长(小时,0永久):','24'); if(duration===null)return; socket?.send(JSON.stringify({type:'ban_user',username,reason,duration:parseInt(duration)||0})); } setTimeout(loadAdminData,500); };
+            window.muteUser=function(username){const duration=prompt('禁言时长(分钟,0永久):','30'); if(duration===null)return; const reason=prompt('原因:','违规'); if(reason===null)return; socket?.send(JSON.stringify({type:'mute_user',username,duration:parseInt(duration)||0,reason})); setTimeout(loadAdminData,500);};
+            window.unmuteUser=function(username){socket?.send(JSON.stringify({type:'unmute_user',username})); setTimeout(loadAdminData,500);};
+            window.deleteUser=function(username){if(confirm(`删除用户 ${username}?`)){socket?.send(JSON.stringify({type:'delete_user',username})); setTimeout(loadAdminData,500);}};
+            window.resetPassword=function(username){const newPass=prompt('新密码:'); if(newPass) socket?.send(JSON.stringify({type:'reset_password',username,newPassword:newPass}));};
+            window.deleteMessage=function(id){if(confirm('删除此消息?')){socket?.send(JSON.stringify({type:'admin_delete_message',messageId:id})); setTimeout(loadAdminData,500);}};
+            window.recallMessage=function(id){if(confirm('撤回此消息?')){socket?.send(JSON.stringify({type:'admin_recall_message',messageId:id})); setTimeout(loadAdminData,500);}};
+            
+            adminTabs.addEventListener('click', function(e){ const tab=e.target.closest('.tab'); if(!tab)return; adminTabs.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); currentAdminTab=tab.dataset.tab; if(currentAdminTab==='users')renderAdminUsers(); else if(currentAdminTab==='messages')renderAdminMessages(); else if(currentAdminTab==='stats')renderAdminStats(); else if(currentAdminTab==='logs')renderAdminLogs(); });
+            
+            systemChatBtn.addEventListener('click', showSystemChat);
+            
+            // Emoji picker
+            function initEmojiPicker() {
+                renderEmojiCategories();
+                renderEmojiPage();
+                
+                emojiBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    emojiPicker.classList.toggle('active');
+                });
+                
+                document.addEventListener('click', function(e) {
+                    if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) {
+                        emojiPicker.classList.remove('active');
+                    }
+                });
+                
+                emojiCategories.addEventListener('click', function(e) {
+                    const category = e.target.closest('.emoji-category');
+                    if (category) {
+                        currentEmojiCategory = category.dataset.category;
+                        currentEmojiPage = 0;
+                        renderEmojiCategories();
+                        renderEmojiPage();
+                    }
+                });
+                
+                emojiPageIndicator.addEventListener('click', function(e) {
+                    const dot = e.target.closest('.emoji-dot');
+                    if (dot) {
+                        currentEmojiPage = parseInt(dot.dataset.page);
+                        renderEmojiPage();
+                    }
+                });
+            }
+            
+            function renderEmojiCategories() {
+                emojiCategories.innerHTML = '';
+                Object.keys(emojiData).forEach(key => {
+                    const category = emojiData[key];
+                    const div = document.createElement('div');
+                    div.className = 'emoji-category' + (key === currentEmojiCategory ? ' active' : '');
+                    div.dataset.category = key;
+                    div.textContent = category.icon;
+                    div.title = category.name;
+                    emojiCategories.appendChild(div);
+                });
+            }
+            
+            function renderEmojiPage() {
+                const category = emojiData[currentEmojiCategory];
+                const emojisPerPage = 32;
+                const totalPages = Math.ceil(category.emojis.length / emojisPerPage);
+                currentEmojiPage = Math.min(currentEmojiPage, totalPages - 1);
+                
+                const startIndex = currentEmojiPage * emojisPerPage;
+                const endIndex = Math.min(startIndex + emojisPerPage, category.emojis.length);
+                const pageEmojis = category.emojis.slice(startIndex, endIndex);
+                
+                emojiBody.innerHTML = '';
+                const grid = document.createElement('div');
+                grid.className = 'emoji-grid';
+                pageEmojis.forEach(emoji => {
+                    const span = document.createElement('span');
+                    span.className = 'emoji-item';
+                    span.textContent = emoji;
+                    span.addEventListener('click', function() {
+                        messageInput.value += emoji;
+                        messageInput.focus();
+                    });
+                    grid.appendChild(span);
+                });
+                emojiBody.appendChild(grid);
+                
+                emojiPageIndicator.innerHTML = '';
+                for (let i = 0; i < totalPages; i++) {
+                    const dot = document.createElement('span');
+                    dot.className = 'emoji-dot' + (i === currentEmojiPage ? ' active' : '');
+                    dot.dataset.page = i;
+                    emojiPageIndicator.appendChild(dot);
+                }
+            }
+            
+            // Search functionality
+            searchToggleBtn.addEventListener('click', function() {
+                searchContainer.style.display = searchContainer.style.display === 'none' ? 'block' : 'none';
+                if (searchContainer.style.display === 'block') {
+                    searchInput.focus();
+                } else {
+                    searchInput.value = '';
+                    searchResults.classList.remove('active');
+                    clearHighlights();
+                }
+            });
+            
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                if (query.length < 1) {
+                    searchResults.classList.remove('active');
+                    clearHighlights();
+                    return;
+                }
+                performSearch(query);
+            });
+            
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    performSearch(this.value.trim());
+                }
+            });
+            
+            function performSearch(query) {
+                if (!query) return;
+                searchResultsData = [];
+                currentMessageElements.forEach(msg => {
+                    if (msg.text && msg.text.toLowerCase().includes(query.toLowerCase())) {
+                        searchResultsData.push(msg);
+                    }
+                });
+                
+                if (searchResultsData.length > 0) {
+                    searchResults.innerHTML = '';
+                    searchResultsData.forEach((msg, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'search-result-item';
+                        const highlightedText = msg.text.replace(new RegExp(query, 'gi'), match => `<span class="highlight">${match}</span>`);
+                        div.innerHTML = `<strong>${msg.time ? new Date(msg.time).toLocaleTimeString() : ''}</strong> - ${highlightedText}`;
+                        div.addEventListener('click', function() {
+                            scrollToMessage(msg.id);
+                            searchResults.classList.remove('active');
+                        });
+                        searchResults.appendChild(div);
+                    });
+                    searchResults.classList.add('active');
+                    highlightMessages(query);
+                } else {
+                    searchResults.innerHTML = '<div class="search-result-item">未找到匹配消息</div>';
+                    searchResults.classList.add('active');
+                    clearHighlights();
+                }
+            }
+            
+            function highlightMessages(query) {
+                clearHighlights();
+                searchResultsData.forEach(msg => {
+                    const contentDiv = msg.element.querySelector('.message-content');
+                    if (contentDiv) {
+                        const originalText = contentDiv.textContent;
+                        const regex = new RegExp(query, 'gi');
+                        contentDiv.innerHTML = originalText.replace(regex, match => `<span class="highlight">${match}</span>`);
+                    }
+                });
+            }
+            
+            function clearHighlights() {
+                currentMessageElements.forEach(msg => {
+                    const contentDiv = msg.element.querySelector('.message-content');
+                    if (contentDiv && contentDiv.querySelector('.highlight')) {
+                        contentDiv.textContent = msg.text;
+                    }
+                });
+            }
+            
+            function scrollToMessage(messageId) {
+                clearHighlights();
+                const target = currentMessageElements.find(m => m.id === messageId);
+                if (target) {
+                    target.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    target.element.style.transition = '0.3s';
+                    target.element.style.boxShadow = '0 0 10px rgba(7,193,96,0.5)';
+                    setTimeout(() => {
+                        target.element.style.boxShadow = '';
+                    }, 2000);
+                    if (searchInput.value.trim()) {
+                        highlightMessages(searchInput.value.trim());
+                    }
+                }
+            }
+            
+            // Clear chat functionality
+            clearChatBtn.addEventListener('click', function() {
+                if (currentChat === 'system') return;
+                if (!confirm('确定要清空当前聊天显示吗？此操作不会删除服务器上的消息。')) return;
+                messageContainer.innerHTML = '';
+                currentMessageElements = [];
+                if (currentChat === 'public') {
+                    messageContainer.innerHTML = '<div class="system-message">👋 聊天记录已清空</div>';
+                } else if (currentChat === 'private') {
+                    messageContainer.innerHTML = '<div class="system-message">💬 私聊记录已清空</div>';
+                }
+            });
+            
+            function setupEventListeners(){
+                sendBtn.addEventListener('click', sendMessage);
+                messageInput.addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); sendMessage(); } });
+                backBtn.addEventListener('click', ()=>{ chatApp.classList.remove('show-chat'); chatApp.classList.add('show-list'); });
+                profileBtn.addEventListener('click', ()=> showUserProfile(currentUser.username));
+                closeProfileModal.addEventListener('click', ()=> profileModal.classList.remove('active'));
+                profileModal.addEventListener('click', (e)=>{ if(e.target===profileModal) profileModal.classList.remove('active'); });
+                settingsBackBtn.addEventListener('click', ()=>{ settingsPage.classList.remove('active'); chatApp.classList.add('active'); document.getElementById('navChat').classList.add('active'); document.getElementById('navSettings').classList.remove('active'); document.getElementById('navAdmin').classList.remove('active'); handleMobileView(); });
+                saveProfileBtn.addEventListener('click', saveProfile);
+                logoutBtn.addEventListener('click', logout);
+                adminBackBtn.addEventListener('click', ()=>{ adminPage.classList.remove('active'); chatApp.classList.add('active'); document.getElementById('navChat').classList.add('active'); document.getElementById('navAdmin').classList.remove('active'); handleMobileView(); });
+                window.addEventListener('resize', handleMobileView);
+            }
+            
+            window.addEventListener('beforeunload', ()=>{ if(socket&&socket.readyState===WebSocket.OPEN) socket.close(1000,'页面关闭'); });
+        })();
+    </script>
+</body>
+</html>

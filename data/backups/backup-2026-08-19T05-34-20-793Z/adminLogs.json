@@ -1,0 +1,20 @@
+[
+  {
+    "admin": "zuijiawzy",
+    "action": "删除用户",
+    "details": "test",
+    "time": "2026-08-19T04:21:34.516Z"
+  },
+  {
+    "admin": "zuijiawzy",
+    "action": "删除用户",
+    "details": "xiaoming",
+    "time": "2026-08-19T04:21:36.065Z"
+  },
+  {
+    "admin": "zuijiawzy",
+    "action": "设为管理员",
+    "details": "wudy",
+    "time": "2026-08-19T04:37:04.794Z"
+  }
+]
