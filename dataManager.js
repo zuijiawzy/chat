@@ -18,6 +18,7 @@ const FILES = {
     friendRequests: path.join(DATA_DIR, 'friendRequests.json'),
     appeals: path.join(DATA_DIR, 'appeals.json'),
     adminLogs: path.join(DATA_DIR, 'adminLogs.json'),
+    systemAnnouncements: path.join(DATA_DIR, 'systemAnnouncements.json'),
 };
 
 // 通用读写函数
@@ -116,6 +117,15 @@ function saveAdminLogs(logs) {
     return writeData(FILES.adminLogs, logs);
 }
 
+// ============ 系统公告 ============
+function loadSystemAnnouncements() {
+    return readData(FILES.systemAnnouncements, []);
+}
+
+function saveSystemAnnouncements(announcements) {
+    return writeData(FILES.systemAnnouncements, announcements);
+}
+
 // ============ 备份功能 ============
 function backupAllData() {
     const backupDir = path.join(DATA_DIR, 'backups');
@@ -131,7 +141,7 @@ function backupAllData() {
         fs.mkdirSync(backupPath, { recursive: true });
         
         // 复制所有数据文件
-        const files = ['users.json', 'messages.json', 'privateMessages.json', 'friendRequests.json', 'appeals.json', 'adminLogs.json'];
+        const files = ['users.json', 'messages.json', 'privateMessages.json', 'friendRequests.json', 'appeals.json', 'adminLogs.json', 'systemAnnouncements.json'];
         files.forEach(file => {
             const src = path.join(DATA_DIR, file);
             const dest = path.join(backupPath, file);
@@ -139,6 +149,17 @@ function backupAllData() {
                 fs.copyFileSync(src, dest);
             }
         });
+        
+        // 清理旧备份（只保留最近 10 个）
+        const backupDirs = fs.readdirSync(backupDir)
+            .filter(name => fs.statSync(path.join(backupDir, name)).isDirectory())
+            .sort();
+        
+        while (backupDirs.length > 10) {
+            const oldest = backupDirs.shift();
+            fs.rmSync(path.join(backupDir, oldest), { recursive: true, force: true });
+            console.log(`🗑️ 删除旧备份: ${oldest}`);
+        }
         
         console.log(`✅ 数据备份成功: ${backupPath}`);
         return true;
@@ -174,6 +195,8 @@ module.exports = {
     saveAppeals,
     loadAdminLogs,
     saveAdminLogs,
+    loadSystemAnnouncements,
+    saveSystemAnnouncements,
     backupAllData,
     startAutoBackup,
     DATA_DIR,
