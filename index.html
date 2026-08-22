@@ -222,17 +222,16 @@
         .chat-item .chat-badge.show { display: inline-block; }
         
         .system-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
             background: #f5222d;
             color: white;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             padding: 2px 6px;
             border-radius: 10px;
+            margin-left: 8px;
             display: none;
+            flex-shrink: 0;
         }
-        .system-badge.show { display: block; }
+        .system-badge.show { display: inline-block; }
         
         .main-chat {
             flex: 1;
@@ -303,67 +302,51 @@
             position: relative;
         }
         
-        /* ===== 系统公告样式 - 居中横幅卡片 ===== */
-        .announcement-banner {
-            align-self: center;
-            width: 90%;
-            max-width: 700px;
-            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
-            border: 2px solid #f59e0b;
-            border-radius: 12px;
-            padding: 16px 24px;
-            margin: 6px 0 12px 0;
-            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.25);
-            position: relative;
-            animation: announcementSlideDown 0.5s ease-out;
-            text-align: center;
-            z-index: 50;
+        /* 公告在系统消息中的卡片样式 */
+        .announcement-item {
+            background: #fff3cd;
+            border-left: 4px solid #f59e0b;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin: 6px 0;
+            align-self: stretch;
+            width: 100%;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
         }
-        .announcement-banner .announcement-icon {
-            font-size: 1.5rem;
-            margin-right: 10px;
+        .announcement-item .announcement-icon {
+            font-size: 1.2rem;
+            margin-right: 8px;
         }
-        .announcement-banner .announcement-content {
-            font-size: 1rem;
+        .announcement-item .announcement-text {
+            font-size: 0.95rem;
             color: #78350f;
             font-weight: 500;
-            line-height: 1.6;
             word-break: break-word;
         }
-        .announcement-banner .announcement-time {
-            display: block;
-            font-size: 0.7rem;
+        .announcement-item .announcement-meta {
+            font-size: 0.75rem;
             color: #92400e;
-            opacity: 0.7;
-            margin-top: 6px;
-            font-weight: 400;
+            opacity: 0.8;
+            margin-top: 4px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
         }
-        .announcement-banner .announcement-close-btn {
-            position: absolute;
-            top: 8px;
-            right: 12px;
+        .announcement-item .announcement-close {
+            float: right;
             background: none;
             border: none;
-            font-size: 1.2rem;
+            font-size: 1rem;
             cursor: pointer;
             color: #92400e;
             opacity: 0.5;
-            transition: 0.15s;
-            padding: 4px;
+            padding: 0 4px;
         }
-        .announcement-banner .announcement-close-btn:hover {
-            opacity: 1;
-        }
+        .announcement-item .announcement-close:hover { opacity: 1; }
         
-        @keyframes announcementSlideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+        /* 原来居中的横幅样式保留，但不再用于公告（公告已移至系统消息） */
+        .announcement-banner {
+            display: none; /* 隐藏旧的横幅，公告全部迁移到系统消息 */
         }
         
         .message {
@@ -418,9 +401,8 @@
             border-radius: 6px;
             padding: 12px 15px;
             margin: 5px 0;
-            align-self: center;
-            max-width: 85%;
-            width: auto;
+            align-self: stretch;
+            width: 100%;
         }
         .system-notification .notification-content {
             font-size: 0.9rem;
@@ -985,13 +967,6 @@
                 font-size: 1.3rem !important;
                 padding: 4px 6px !important;
             }
-            .announcement-banner {
-                width: 95%;
-                padding: 12px 16px;
-            }
-            .announcement-banner .announcement-content {
-                font-size: 0.9rem;
-            }
         }
         
         @media (max-width: 400px) {
@@ -1501,61 +1476,77 @@
                 messageContainer.scrollTop = messageContainer.scrollHeight;
             }
             
-            // ===== 公告渲染 =====
+            // ===== 公告渲染 ———— 现在只渲染在“系统消息”中 =====
             function renderAnnouncements() {
-                // 移除已有公告
-                document.querySelectorAll('.announcement-banner').forEach(el => el.remove());
+                // 如果当前不是系统消息，不显示公告
+                if (currentChat !== 'system') {
+                    // 但在系统消息中，我们需要渲染公告，所以这里不返回，而是判断
+                    // 我们只在系统消息中渲染，其他视图不显示公告
+                }
+                // 移除旧的公告元素（只在系统消息中移除）
+                document.querySelectorAll('.announcement-item').forEach(el => el.remove());
                 
                 const now = Date.now();
                 const validAnnouncements = activeAnnouncements.filter(ann => {
                     return !ann.expiresAt || now < ann.expiresAt;
                 });
                 
-                if (validAnnouncements.length === 0) return;
+                if (validAnnouncements.length === 0 || currentChat !== 'system') return;
                 
-                // 在消息容器顶部插入公告（在系统消息之后，但在所有聊天消息之前）
-                const firstChild = messageContainer.firstChild;
+                // 在系统消息容器中，在系统消息之后插入公告
+                const children = messageContainer.children;
+                let insertIndex = 0;
+                // 找到第一个非系统消息的位置，或者所有公告放在开头
+                // 为了让公告显示在系统消息列表中，我们插入到开头（但保留系统消息的欢迎语？）
+                // 更合理：在系统消息中，公告显示为独立的卡片
+                // 我们直接追加到末尾，但为了清晰，插入到第一个元素之后
+                if (children.length > 0) {
+                    // 如果第一个是系统消息，插在其后面
+                    insertIndex = 1;
+                }
+                
                 validAnnouncements.forEach(ann => {
-                    const banner = document.createElement('div');
-                    banner.className = 'announcement-banner';
-                    banner.dataset.announcementId = ann.id;
+                    const item = document.createElement('div');
+                    item.className = 'announcement-item';
+                    item.dataset.announcementId = ann.id;
                     
-                    // 关闭按钮（仅对当前用户可见，只隐藏本地）
                     const closeBtn = document.createElement('button');
-                    closeBtn.className = 'announcement-close-btn';
-                    closeBtn.textContent = '×';
+                    closeBtn.className = 'announcement-close';
+                    closeBtn.textContent = '✕';
                     closeBtn.title = '关闭此公告（仅对您隐藏）';
                     closeBtn.addEventListener('click', function(e) {
                         e.stopPropagation();
-                        banner.style.display = 'none';
-                        // 从本地列表中移除
+                        item.remove();
                         activeAnnouncements = activeAnnouncements.filter(a => a.id !== ann.id);
+                        // 更新红点
+                        updateSystemBadge();
                     });
-                    banner.appendChild(closeBtn);
+                    item.appendChild(closeBtn);
                     
-                    const contentSpan = document.createElement('span');
-                    contentSpan.className = 'announcement-content';
-                    contentSpan.innerHTML = `<span class="announcement-icon">📢</span> ${ann.content}`;
-                    banner.appendChild(contentSpan);
+                    const textSpan = document.createElement('div');
+                    textSpan.className = 'announcement-text';
+                    textSpan.innerHTML = `<span class="announcement-icon">📢</span> ${ann.content}`;
+                    item.appendChild(textSpan);
                     
-                    const timeSpan = document.createElement('span');
-                    timeSpan.className = 'announcement-time';
+                    const metaSpan = document.createElement('div');
+                    metaSpan.className = 'announcement-meta';
                     const pubTime = new Date(ann.publishedAt);
-                    timeSpan.textContent = `发布于 ${pubTime.toLocaleString()}`;
+                    metaSpan.textContent = `发布于 ${pubTime.toLocaleString()}`;
                     if (ann.durationDays > 0) {
-                        timeSpan.textContent += ` · 有效期 ${ann.durationDays} 天`;
+                        metaSpan.textContent += ` · 有效期 ${ann.durationDays} 天`;
                     }
-                    banner.appendChild(timeSpan);
+                    item.appendChild(metaSpan);
                     
-                    // 插入到消息容器最前面（在欢迎消息之后）
-                    if (firstChild && firstChild.classList && firstChild.classList.contains('system-message')) {
-                        messageContainer.insertBefore(banner, firstChild.nextSibling);
-                    } else if (firstChild) {
-                        messageContainer.insertBefore(banner, firstChild);
+                    // 插入到合适位置
+                    if (children.length > 0 && insertIndex < children.length) {
+                        messageContainer.insertBefore(item, children[insertIndex]);
                     } else {
-                        messageContainer.appendChild(banner);
+                        messageContainer.appendChild(item);
                     }
                 });
+                
+                // 更新红点：如果有公告，显示红点
+                updateSystemBadge();
             }
             
             function renderChatList(){
@@ -1614,11 +1605,14 @@
                     chatList.appendChild(friendItem);
                 });
                 
-                // ===== 系统消息 =====
+                // ===== 系统消息 - 带红点 =====
                 const systemItem = document.createElement('div');
-                systemItem.className = 'chat-item';
+                systemItem.className = 'chat-item' + (currentChat === 'system' ? ' active' : '');
                 systemItem.style.cursor = 'pointer';
-                systemItem.innerHTML = `<div class="chat-icon">📢</div><div class="chat-info"><div class="chat-name">系统消息</div><div class="chat-preview"> </div></div><span class="system-badge" id="systemListBadge">●</span>`;
+                const hasAnnouncements = activeAnnouncements.length > 0;
+                const hasPendingSystem = systemMessagesData.some(m => m.pending);
+                const showBadge = hasAnnouncements || hasPendingSystem;
+                systemItem.innerHTML = `<div class="chat-icon">📢</div><div class="chat-info"><div class="chat-name">系统消息</div><div class="chat-preview">${hasAnnouncements ? '📢 有新公告' : '系统通知'}</div></div><span class="system-badge ${showBadge ? 'show' : ''}" id="systemListBadge">●</span>`;
                 systemItem.addEventListener('click', ()=> showSystemChat());
                 chatList.appendChild(systemItem);
                 updateSystemBadge();
@@ -1627,9 +1621,39 @@
             function updateSystemBadge() {
                 const badge = document.getElementById('systemListBadge');
                 if (badge) {
-                    if (systemMessagesData.some(m => m.pending)) badge.classList.add('show');
-                    else badge.classList.remove('show');
+                    const hasAnnouncements = activeAnnouncements.length > 0;
+                    const hasPendingSystem = systemMessagesData.some(m => m.pending);
+                    if (hasAnnouncements || hasPendingSystem) {
+                        badge.classList.add('show');
+                    } else {
+                        badge.classList.remove('show');
+                    }
                 }
+                // 同时更新聊天列表中的系统消息项
+                const chatItems = chatList.querySelectorAll('.chat-item');
+                chatItems.forEach(item => {
+                    const nameDiv = item.querySelector('.chat-name');
+                    if (nameDiv && nameDiv.textContent === '系统消息') {
+                        const badgeSpan = item.querySelector('.system-badge');
+                        if (badgeSpan) {
+                            const hasAnn = activeAnnouncements.length > 0;
+                            const hasPending = systemMessagesData.some(m => m.pending);
+                            if (hasAnn || hasPending) {
+                                badgeSpan.classList.add('show');
+                            } else {
+                                badgeSpan.classList.remove('show');
+                            }
+                        }
+                        const previewSpan = item.querySelector('.chat-preview');
+                        if (previewSpan) {
+                            if (activeAnnouncements.length > 0) {
+                                previewSpan.textContent = '📢 有新公告';
+                            } else {
+                                previewSpan.textContent = '系统通知';
+                            }
+                        }
+                    }
+                });
             }
             
             function showSystemChat() {
@@ -1637,9 +1661,15 @@
                 currentChatPartner = null;
                 chatTitle.textContent = '📢 系统消息';
                 messageContainer.innerHTML = '';
-                if (systemMessagesData.length === 0) {
+                
+                // 先渲染公告
+                renderAnnouncements();
+                
+                // 再渲染系统通知（好友请求等）
+                if (systemMessagesData.length === 0 && activeAnnouncements.length === 0) {
                     messageContainer.innerHTML = '<div class="system-message">暂无系统通知</div>';
                 } else {
+                    // 系统通知
                     systemMessagesData.forEach(msg => {
                         addSystemNotificationToChat(msg.content, msg.actions);
                     });
@@ -1654,8 +1684,8 @@
                 currentMessageElements = [];
                 if(messageHistory.length > 0){ messageHistory.forEach(msg => addMessageToUI(msg)); }
                 else messageContainer.innerHTML = '<div class="system-message">👋 欢迎来到聊天室</div>';
-                // 渲染公告
-                renderAnnouncements();
+                // 公共大厅不显示公告
+                document.querySelectorAll('.announcement-item').forEach(el => el.remove());
                 renderChatList(); 
                 handleMobileView();
             }
@@ -1668,7 +1698,8 @@
                 const msgs = privateMessageHistory[friend] || [];
                 if(msgs.length > 0){ msgs.forEach(msg => addMessageToUI(msg)); }
                 else messageContainer.innerHTML = '<div class="system-message">开始聊天吧</div>';
-                renderAnnouncements();
+                // 私聊不显示公告
+                document.querySelectorAll('.announcement-item').forEach(el => el.remove());
                 renderChatList(); 
                 handleMobileView();
             }
@@ -1699,7 +1730,7 @@
                             switch(data.type){
                                 case 'user_info': currentUser = { ...currentUser, ...data.user }; myNickname.textContent = currentUser.nickname; updateRoleBadge(); renderChatList(); break;
                                 case 'history':
-                                    if(data.messages){ messageHistory = data.messages; if(currentChat==='public'){ messageContainer.innerHTML=''; currentMessageElements=[]; messageHistory.forEach(msg=>addMessageToUI(msg)); if(messageHistory.length===0) messageContainer.innerHTML='<div class="system-message">👋 欢迎来到聊天室</div>'; renderAnnouncements(); } renderChatList(); }
+                                    if(data.messages){ messageHistory = data.messages; if(currentChat==='public'){ messageContainer.innerHTML=''; currentMessageElements=[]; messageHistory.forEach(msg=>addMessageToUI(msg)); if(messageHistory.length===0) messageContainer.innerHTML='<div class="system-message">👋 欢迎来到聊天室</div>'; } renderChatList(); }
                                     break;
                                 case 'private_history':
                                     if(data.messages){ data.messages.forEach(msg=>{ const partner = msg.from===currentUser.username ? msg.to : msg.from; if(!privateMessageHistory[partner]) privateMessageHistory[partner]=[]; privateMessageHistory[partner].push(msg); }); if(currentChat==='private'&&currentChatPartner) switchToPrivateChat(currentChatPartner); renderChatList(); }
@@ -1769,8 +1800,12 @@
                                 case 'system_announcements':
                                     if(data.announcements) {
                                         activeAnnouncements = data.announcements;
-                                        renderAnnouncements();
+                                        // 如果当前在系统消息中，立即渲染
+                                        if (currentChat === 'system') {
+                                            renderAnnouncements();
+                                        }
                                         renderChatList();
+                                        updateSystemBadge();
                                     }
                                     break;
                                 case 'admin_data':
@@ -2254,7 +2289,8 @@
                 } else if (currentChat === 'private') {
                     messageContainer.innerHTML = '<div class="system-message">💬 私聊记录已清空</div>';
                 }
-                renderAnnouncements();
+                // 清空公告（仅清空公告，但私聊/大厅不显示公告）
+                document.querySelectorAll('.announcement-item').forEach(el => el.remove());
             });
             
             function setupEventListeners(){
